@@ -1,8 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function MentorshipDashboard() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchMentor, setSearchMentor] = useState('');
+  const [isMobile, setIsMobile] = useState(false);
+  const [isTablet, setIsTablet] = useState(false);
+
+  // Detect screen size
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const width = window.innerWidth;
+      setIsMobile(width < 768);
+      setIsTablet(width >= 768 && width < 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Sample data - In production, this would come from an API
   const dashboardStats = {
@@ -176,12 +191,12 @@ export default function MentorshipDashboard() {
               <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
             </svg>
           </div>
-          <h1 style={styles.title}>Mentorship Dashboard</h1>
-          <p style={styles.subtitle}>Track and manage all mentorship sessions</p>
+          <h1 style={isMobile ? styles.titleMobile : styles.title}>Mentorship Dashboard</h1>
+          <p style={isMobile ? styles.subtitleMobile : styles.subtitle}>Track and manage all mentorship sessions</p>
         </div>
 
         {/* Stats Cards */}
-        <div style={styles.statsGrid}>
+        <div style={isMobile ? styles.statsGridMobile : isTablet ? styles.statsGridTablet : styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={{...styles.statIcon, background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'}}>
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={styles.statIconSvg}>
@@ -192,7 +207,7 @@ export default function MentorshipDashboard() {
               </svg>
             </div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{dashboardStats.totalMentors}</div>
+              <div style={isMobile ? styles.statValueMobile : styles.statValue}>{dashboardStats.totalMentors}</div>
               <div style={styles.statLabel}>Total Mentors</div>
             </div>
           </div>
@@ -207,7 +222,7 @@ export default function MentorshipDashboard() {
               </svg>
             </div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{dashboardStats.totalMentees}</div>
+              <div style={isMobile ? styles.statValueMobile : styles.statValue}>{dashboardStats.totalMentees}</div>
               <div style={styles.statLabel}>Total Mentees</div>
             </div>
           </div>
@@ -220,7 +235,7 @@ export default function MentorshipDashboard() {
               </svg>
             </div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{dashboardStats.completedMeetings}</div>
+              <div style={isMobile ? styles.statValueMobile : styles.statValue}>{dashboardStats.completedMeetings}</div>
               <div style={styles.statLabel}>Completed</div>
             </div>
           </div>
@@ -235,7 +250,7 @@ export default function MentorshipDashboard() {
               </svg>
             </div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{dashboardStats.upcomingMeetings}</div>
+              <div style={isMobile ? styles.statValueMobile : styles.statValue}>{dashboardStats.upcomingMeetings}</div>
               <div style={styles.statLabel}>Upcoming</div>
             </div>
           </div>
@@ -248,7 +263,7 @@ export default function MentorshipDashboard() {
               </svg>
             </div>
             <div style={styles.statContent}>
-              <div style={styles.statValue}>{dashboardStats.postponedMeetings}</div>
+              <div style={isMobile ? styles.statValueMobile : styles.statValue}>{dashboardStats.postponedMeetings}</div>
               <div style={styles.statLabel}>Postponed</div>
             </div>
           </div>
@@ -257,7 +272,7 @@ export default function MentorshipDashboard() {
         {/* Search Section */}
         <div style={styles.searchCard}>
           <div style={styles.searchHeader}>
-            <h2 style={styles.searchTitle}>Search Mentors</h2>
+            <h2 style={isMobile ? styles.searchTitleMobile : styles.searchTitle}>Search Mentors</h2>
           </div>
           <div style={styles.searchContent}>
             <div style={styles.searchBox}>
@@ -293,11 +308,13 @@ export default function MentorshipDashboard() {
               <line x1="20" y1="8" x2="20" y2="14"></line>
               <line x1="23" y1="11" x2="17" y2="11"></line>
             </svg>
-            <h2 style={styles.capacityTitle}>
+            <h2 style={isMobile ? styles.capacityTitleMobile : styles.capacityTitle}>
               Mentor Capacity {searchMentor && `- Results for "${searchMentor}"`}
             </h2>
           </div>
-          <p style={styles.capacitySubtitle}>Each mentor supports maximum 3 mentees for personalized attention</p>
+          <p style={isMobile ? styles.capacitySubtitleMobile : styles.capacitySubtitle}>
+            Each mentor supports maximum 3 mentees for personalized attention
+          </p>
           
           {Object.keys(filteredMentorCapacity).length === 0 ? (
             <div style={styles.emptyState}>
@@ -311,7 +328,7 @@ export default function MentorshipDashboard() {
               </p>
             </div>
           ) : (
-            <div style={styles.capacityGrid}>
+            <div style={isMobile ? styles.capacityGridMobile : isTablet ? styles.capacityGridTablet : styles.capacityGrid}>
               {Object.entries(filteredMentorCapacity).map(([mentor, data]) => {
                 const count = data.mentees.size;
                 const percentage = (count / 3) * 100;
@@ -320,7 +337,7 @@ export default function MentorshipDashboard() {
                 return (
                   <div key={mentor} style={styles.capacityItem}>
                     <div style={styles.capacityItemHeader}>
-                      <h3 style={styles.mentorName}>{mentor}</h3>
+                      <h3 style={isMobile ? styles.mentorNameMobile : styles.mentorName}>{mentor}</h3>
                       <span style={styles.menteeCount}>{count}/3 mentees</span>
                     </div>
                     
@@ -368,9 +385,9 @@ export default function MentorshipDashboard() {
 
         {/* Sessions Section */}
         <div style={styles.sessionsCard}>
-          <div style={styles.sessionsHeader}>
+          <div style={isMobile ? styles.sessionsHeaderMobile : styles.sessionsHeader}>
             <div>
-              <h2 style={styles.sessionsTitle}>
+              <h2 style={isMobile ? styles.sessionsTitleMobile : styles.sessionsTitle}>
                 All Sessions {searchMentor && `- Filtered by "${searchMentor}"`}
               </h2>
               <div style={styles.sessionCount}>
@@ -379,44 +396,46 @@ export default function MentorshipDashboard() {
             </div>
             
             {/* Status Filter */}
-            <div style={styles.filterGroup}>
+            <div style={isMobile ? styles.filterGroupMobile : styles.filterGroup}>
               <span style={styles.filterLabel}>Filter by Status:</span>
-              <button
-                onClick={() => setFilterStatus('all')}
-                style={{
-                  ...styles.filterBtn,
-                  ...(filterStatus === 'all' ? styles.filterBtnActive : {})
-                }}
-              >
-                All
-              </button>
-              <button
-                onClick={() => setFilterStatus('completed')}
-                style={{
-                  ...styles.filterBtn,
-                  ...(filterStatus === 'completed' ? styles.filterBtnActiveGreen : {})
-                }}
-              >
-                Completed
-              </button>
-              <button
-                onClick={() => setFilterStatus('upcoming')}
-                style={{
-                  ...styles.filterBtn,
-                  ...(filterStatus === 'upcoming' ? styles.filterBtnActiveBlue : {})
-                }}
-              >
-                Upcoming
-              </button>
-              <button
-                onClick={() => setFilterStatus('postponed')}
-                style={{
-                  ...styles.filterBtn,
-                  ...(filterStatus === 'postponed' ? styles.filterBtnActiveAmber : {})
-                }}
-              >
-                Postponed
-              </button>
+              <div style={isMobile ? styles.filterButtonsMobile : styles.filterButtons}>
+                <button
+                  onClick={() => setFilterStatus('all')}
+                  style={{
+                    ...styles.filterBtn,
+                    ...(filterStatus === 'all' ? styles.filterBtnActive : {})
+                  }}
+                >
+                  All
+                </button>
+                <button
+                  onClick={() => setFilterStatus('completed')}
+                  style={{
+                    ...styles.filterBtn,
+                    ...(filterStatus === 'completed' ? styles.filterBtnActiveGreen : {})
+                  }}
+                >
+                  Completed
+                </button>
+                <button
+                  onClick={() => setFilterStatus('upcoming')}
+                  style={{
+                    ...styles.filterBtn,
+                    ...(filterStatus === 'upcoming' ? styles.filterBtnActiveBlue : {})
+                  }}
+                >
+                  Upcoming
+                </button>
+                <button
+                  onClick={() => setFilterStatus('postponed')}
+                  style={{
+                    ...styles.filterBtn,
+                    ...(filterStatus === 'postponed' ? styles.filterBtnActiveAmber : {})
+                  }}
+                >
+                  Postponed
+                </button>
+              </div>
             </div>
           </div>
 
@@ -435,14 +454,14 @@ export default function MentorshipDashboard() {
               </p>
             </div>
           ) : (
-            <div style={styles.sessionsGrid}>
+            <div style={isMobile ? styles.sessionsGridMobile : isTablet ? styles.sessionsGridTablet : styles.sessionsGrid}>
               {filteredSessions.map(session => {
                 const statusColors = getStatusColor(session.status);
                 return (
                   <div key={session.id} style={styles.sessionCard}>
                     <div style={styles.sessionHeader}>
                       <span style={styles.sessionIcon}>{getStatusIcon(session.status)}</span>
-                      <span style={styles.sessionTopic}>{session.topic}</span>
+                      <span style={isMobile ? styles.sessionTopicMobile : styles.sessionTopic}>{session.topic}</span>
                       <span style={{
                         ...styles.statusBadge,
                         background: statusColors.background,
@@ -461,7 +480,7 @@ export default function MentorshipDashboard() {
                         </svg>
                         <div style={styles.sessionDetailText}>
                           <span style={styles.sessionLabel}>Mentor:</span>
-                          <span style={styles.sessionValue}>{session.mentorName}</span>
+                          <span style={isMobile ? styles.sessionValueMobile : styles.sessionValue}>{session.mentorName}</span>
                         </div>
                       </div>
 
@@ -473,7 +492,7 @@ export default function MentorshipDashboard() {
                         </svg>
                         <div style={styles.sessionDetailText}>
                           <span style={styles.sessionLabel}>Mentee:</span>
-                          <span style={styles.sessionValue}>{session.menteeName}</span>
+                          <span style={isMobile ? styles.sessionValueMobile : styles.sessionValue}>{session.menteeName}</span>
                         </div>
                       </div>
 
@@ -486,7 +505,7 @@ export default function MentorshipDashboard() {
                         </svg>
                         <div style={styles.sessionDetailText}>
                           <span style={styles.sessionLabel}>Date:</span>
-                          <span style={styles.sessionValue}>
+                          <span style={isMobile ? styles.sessionValueMobile : styles.sessionValue}>
                             {new Date(session.date).toLocaleDateString('en-US', { 
                               month: 'short', 
                               day: 'numeric', 
@@ -503,7 +522,7 @@ export default function MentorshipDashboard() {
                         </svg>
                         <div style={styles.sessionDetailText}>
                           <span style={styles.sessionLabel}>Time:</span>
-                          <span style={styles.sessionValue}>{session.time}</span>
+                          <span style={isMobile ? styles.sessionValueMobile : styles.sessionValue}>{session.time}</span>
                         </div>
                       </div>
                     </div>
@@ -516,7 +535,7 @@ export default function MentorshipDashboard() {
 
         {/* Enhanced Footer */}
         <footer style={styles.footer}>
-          <div style={styles.footerContent}>
+          <div style={isMobile ? styles.footerContentMobile : isTablet ? styles.footerContentTablet : styles.footerContent}>
             <div style={styles.footerSection}>
               <h3 style={styles.footerTitle}>Mentorship Program</h3>
               <p style={styles.footerText}>
@@ -540,22 +559,22 @@ export default function MentorshipDashboard() {
               <div style={styles.contactInfo}>
                 <div style={styles.contactItem}>
                   <span style={styles.contactIcon}>📧</span>
-                  <span>mentorship@example.com</span>
+                  <span style={isMobile ? styles.contactTextMobile : styles.contactText}>mentorship@example.com</span>
                 </div>
                 <div style={styles.contactItem}>
                   <span style={styles.contactIcon}>📞</span>
-                  <span>+1 (555) 123-4567</span>
+                  <span style={isMobile ? styles.contactTextMobile : styles.contactText}>+1 (555) 123-4567</span>
                 </div>
                 <div style={styles.contactItem}>
                   <span style={styles.contactIcon}>🏢</span>
-                  <span>123 Learning St, Education City</span>
+                  <span style={isMobile ? styles.contactTextMobile : styles.contactText}>123 Learning St, Education City</span>
                 </div>
               </div>
             </div>
           </div>
           
           <div style={styles.footerBottom}>
-            <div style={styles.footerBottomContent}>
+            <div style={isMobile ? styles.footerBottomContentMobile : styles.footerBottomContent}>
               <p style={styles.copyright}>
                 © 2025 Mentorship Program. All rights reserved.
               </p>
@@ -577,16 +596,24 @@ const styles = {
     minHeight: '100vh',
     width: '100%',
     background: 'linear-gradient(180deg, #e9d5ff 0%, #f3e8ff 30%, #e0e7ff 60%, #dbeafe 100%)',
-    padding: '60px 20px',
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    padding: '20px',
+    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    '@media (max-width: 768px)': {
+      padding: '10px'
+    }
   },
   container: {
     maxWidth: '1400px',
     margin: '0 auto'
   },
+  
+  // Header Styles
   header: {
     textAlign: 'center',
-    marginBottom: '40px'
+    marginBottom: '40px',
+    '@media (max-width: 768px)': {
+      marginBottom: '24px'
+    }
   },
   logo: {
     width: '72px',
@@ -597,15 +624,33 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     margin: '0 auto 24px',
-    boxShadow: '0 8px 24px rgba(139, 92, 246, 0.35)'
+    boxShadow: '0 8px 24px rgba(139, 92, 246, 0.35)',
+    '@media (max-width: 768px)': {
+      width: '60px',
+      height: '60px',
+      marginBottom: '16px'
+    }
   },
   logoSvg: {
     width: '36px',
     height: '36px',
-    color: 'white'
+    color: 'white',
+    '@media (max-width: 768px)': {
+      width: '28px',
+      height: '28px'
+    }
   },
   title: {
     fontSize: '2.5em',
+    fontWeight: '800',
+    background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
+    WebkitBackgroundClip: 'text',
+    WebkitTextFillColor: 'transparent',
+    backgroundClip: 'text',
+    marginBottom: '8px'
+  },
+  titleMobile: {
+    fontSize: '2em',
     fontWeight: '800',
     background: 'linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%)',
     WebkitBackgroundClip: 'text',
@@ -618,11 +663,30 @@ const styles = {
     fontSize: '1em',
     fontWeight: '400'
   },
+  subtitleMobile: {
+    color: '#6b7280',
+    fontSize: '0.9em',
+    fontWeight: '400'
+  },
+
+  // Stats Grid - Responsive
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
     gap: '20px',
     marginBottom: '40px'
+  },
+  statsGridTablet: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '16px',
+    marginBottom: '32px'
+  },
+  statsGridMobile: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '12px',
+    marginBottom: '24px'
   },
   statCard: {
     background: 'white',
@@ -632,7 +696,12 @@ const styles = {
     alignItems: 'center',
     gap: '20px',
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
-    transition: 'all 0.3s ease'
+    transition: 'all 0.3s ease',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      gap: '12px',
+      borderRadius: '12px'
+    }
   },
   statIcon: {
     width: '56px',
@@ -641,12 +710,21 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    flexShrink: 0
+    flexShrink: 0,
+    '@media (max-width: 768px)': {
+      width: '44px',
+      height: '44px',
+      borderRadius: '10px'
+    }
   },
   statIconSvg: {
     width: '28px',
     height: '28px',
-    color: 'white'
+    color: 'white',
+    '@media (max-width: 768px)': {
+      width: '20px',
+      height: '20px'
+    }
   },
   statContent: {
     flex: '1'
@@ -657,25 +735,49 @@ const styles = {
     color: '#1f2937',
     lineHeight: '1'
   },
+  statValueMobile: {
+    fontSize: '1.5em',
+    fontWeight: '800',
+    color: '#1f2937',
+    lineHeight: '1'
+  },
   statLabel: {
     fontSize: '0.85em',
     color: '#6b7280',
     fontWeight: '500',
-    marginTop: '4px'
+    marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75em'
+    }
   },
+
   // Search Section
   searchCard: {
     background: 'white',
     borderRadius: '20px',
     padding: '32px',
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
-    marginBottom: '32px'
+    marginBottom: '32px',
+    '@media (max-width: 768px)': {
+      padding: '20px',
+      borderRadius: '16px',
+      marginBottom: '24px'
+    }
   },
   searchHeader: {
-    marginBottom: '24px'
+    marginBottom: '24px',
+    '@media (max-width: 768px)': {
+      marginBottom: '16px'
+    }
   },
   searchTitle: {
     fontSize: '1.5em',
+    fontWeight: '700',
+    color: '#1f2937',
+    margin: '0'
+  },
+  searchTitleMobile: {
+    fontSize: '1.3em',
     fontWeight: '700',
     color: '#1f2937',
     margin: '0'
@@ -696,7 +798,12 @@ const styles = {
     color: '#9ca3af',
     position: 'absolute',
     left: '16px',
-    zIndex: 1
+    zIndex: 1,
+    '@media (max-width: 768px)': {
+      left: '12px',
+      width: '18px',
+      height: '18px'
+    }
   },
   searchInput: {
     width: '100%',
@@ -707,7 +814,11 @@ const styles = {
     fontWeight: '500',
     color: '#374151',
     background: '#f9fafb',
-    transition: 'all 0.2s ease'
+    transition: 'all 0.2s ease',
+    '@media (max-width: 768px)': {
+      padding: '10px 12px 10px 40px',
+      fontSize: '0.9em'
+    }
   },
   clearSearch: {
     position: 'absolute',
@@ -718,29 +829,51 @@ const styles = {
     color: '#9ca3af',
     cursor: 'pointer',
     padding: '4px',
-    borderRadius: '4px'
+    borderRadius: '4px',
+    '@media (max-width: 768px)': {
+      right: '8px'
+    }
   },
-  // Capacity Section
+
+  // Capacity Section - Responsive
   capacityCard: {
     background: 'white',
     borderRadius: '20px',
     padding: '32px',
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
-    marginBottom: '32px'
+    marginBottom: '32px',
+    '@media (max-width: 768px)': {
+      padding: '20px',
+      borderRadius: '16px',
+      marginBottom: '24px'
+    }
   },
   capacityHeader: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
-    marginBottom: '8px'
+    marginBottom: '8px',
+    '@media (max-width: 768px)': {
+      gap: '8px'
+    }
   },
   capacityIcon: {
     width: '24px',
     height: '24px',
-    color: '#8b5cf6'
+    color: '#8b5cf6',
+    '@media (max-width: 768px)': {
+      width: '20px',
+      height: '20px'
+    }
   },
   capacityTitle: {
     fontSize: '1.5em',
+    fontWeight: '700',
+    color: '#1f2937',
+    margin: '0'
+  },
+  capacityTitleMobile: {
+    fontSize: '1.3em',
     fontWeight: '700',
     color: '#1f2937',
     margin: '0'
@@ -750,22 +883,45 @@ const styles = {
     fontSize: '1em',
     marginBottom: '24px'
   },
+  capacitySubtitleMobile: {
+    color: '#6b7280',
+    fontSize: '0.9em',
+    marginBottom: '20px'
+  },
   capacityGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
     gap: '20px'
   },
+  capacityGridTablet: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '16px'
+  },
+  capacityGridMobile: {
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gap: '16px'
+  },
   capacityItem: {
     background: '#f9fafb',
     border: '1.5px solid #e5e7eb',
     borderRadius: '14px',
-    padding: '20px'
+    padding: '20px',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      borderRadius: '12px'
+    }
   },
   capacityItemHeader: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: '12px'
+    marginBottom: '12px',
+    '@media (max-width: 768px)': {
+      flexDirection: 'column',
+      gap: '8px'
+    }
   },
   mentorName: {
     fontSize: '1em',
@@ -773,10 +929,19 @@ const styles = {
     color: '#1f2937',
     margin: '0'
   },
+  mentorNameMobile: {
+    fontSize: '0.95em',
+    fontWeight: '600',
+    color: '#1f2937',
+    margin: '0'
+  },
   menteeCount: {
     fontSize: '0.9em',
     fontWeight: '500',
-    color: '#6b7280'
+    color: '#6b7280',
+    '@media (max-width: 768px)': {
+      fontSize: '0.85em'
+    }
   },
   progressBar: {
     width: '100%',
@@ -834,13 +999,19 @@ const styles = {
     color: '#8b5cf6',
     fontWeight: 'bold'
   },
-  // Sessions Section
+
+  // Sessions Section - Responsive
   sessionsCard: {
     background: 'white',
     borderRadius: '20px',
     padding: '32px',
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
-    marginBottom: '32px'
+    marginBottom: '32px',
+    '@media (max-width: 768px)': {
+      padding: '20px',
+      borderRadius: '16px',
+      marginBottom: '24px'
+    }
   },
   sessionsHeader: {
     display: 'flex',
@@ -850,8 +1021,19 @@ const styles = {
     flexWrap: 'wrap',
     gap: '20px'
   },
+  sessionsHeaderMobile: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    marginBottom: '24px'
+  },
   sessionsTitle: {
     fontSize: '1.5em',
+    fontWeight: '700',
+    color: '#1f2937'
+  },
+  sessionsTitleMobile: {
+    fontSize: '1.3em',
     fontWeight: '700',
     color: '#1f2937'
   },
@@ -862,7 +1044,11 @@ const styles = {
     background: '#f3f4f6',
     padding: '8px 16px',
     borderRadius: '8px',
-    marginTop: '8px'
+    marginTop: '8px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.85em',
+      padding: '6px 12px'
+    }
   },
   filterGroup: {
     display: 'flex',
@@ -870,11 +1056,32 @@ const styles = {
     gap: '12px',
     flexWrap: 'wrap'
   },
+  filterGroupMobile: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    width: '100%'
+  },
   filterLabel: {
     fontSize: '0.9em',
     fontWeight: '600',
     color: '#374151',
-    marginRight: '8px'
+    marginRight: '8px',
+    '@media (max-width: 768px)': {
+      marginRight: '0',
+      marginBottom: '8px'
+    }
+  },
+  filterButtons: {
+    display: 'flex',
+    gap: '10px',
+    flexWrap: 'wrap'
+  },
+  filterButtonsMobile: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: '8px',
+    width: '100%'
   },
   filterBtn: {
     padding: '8px 20px',
@@ -885,7 +1092,12 @@ const styles = {
     fontSize: '0.9em',
     fontWeight: '600',
     cursor: 'pointer',
-    transition: 'all 0.2s ease'
+    transition: 'all 0.2s ease',
+    '@media (max-width: 768px)': {
+      padding: '10px 16px',
+      fontSize: '0.85em',
+      textAlign: 'center'
+    }
   },
   filterBtnActive: {
     background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
@@ -912,12 +1124,26 @@ const styles = {
     gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
     gap: '20px'
   },
+  sessionsGridTablet: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+    gap: '16px'
+  },
+  sessionsGridMobile: {
+    display: 'grid',
+    gridTemplateColumns: '1fr',
+    gap: '16px'
+  },
   sessionCard: {
     background: '#f9fafb',
     border: '1.5px solid #e5e7eb',
     borderRadius: '14px',
     padding: '20px',
-    transition: 'all 0.2s ease'
+    transition: 'all 0.2s ease',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      borderRadius: '12px'
+    }
   },
   sessionHeader: {
     display: 'flex',
@@ -925,7 +1151,10 @@ const styles = {
     gap: '10px',
     marginBottom: '16px',
     paddingBottom: '12px',
-    borderBottom: '1px solid #e5e7eb'
+    borderBottom: '1px solid #e5e7eb',
+    '@media (max-width: 768px)': {
+      gap: '8px'
+    }
   },
   sessionIcon: {
     fontSize: '1.2em'
@@ -936,12 +1165,22 @@ const styles = {
     fontWeight: '700',
     color: '#1f2937'
   },
+  sessionTopicMobile: {
+    flex: '1',
+    fontSize: '0.9em',
+    fontWeight: '700',
+    color: '#1f2937'
+  },
   statusBadge: {
     padding: '4px 12px',
     borderRadius: '8px',
     fontSize: '0.75em',
     fontWeight: '600',
-    border: '1px solid'
+    border: '1px solid',
+    '@media (max-width: 768px)': {
+      padding: '4px 10px',
+      fontSize: '0.7em'
+    }
   },
   sessionDetails: {
     display: 'flex',
@@ -951,58 +1190,105 @@ const styles = {
   sessionRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
+    '@media (max-width: 768px)': {
+      gap: '10px'
+    }
   },
   sessionDetailIcon: {
     width: '18px',
     height: '18px',
     color: '#8b5cf6',
-    flexShrink: 0
+    flexShrink: 0,
+    '@media (max-width: 768px)': {
+      width: '16px',
+      height: '16px'
+    }
   },
   sessionDetailText: {
     display: 'flex',
     gap: '8px',
     alignItems: 'center',
-    flex: '1'
+    flex: '1',
+    '@media (max-width: 768px)': {
+      gap: '6px'
+    }
   },
   sessionLabel: {
     fontSize: '0.85em',
     color: '#6b7280',
     fontWeight: '500',
-    minWidth: '55px'
+    minWidth: '55px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8em',
+      minWidth: '50px'
+    }
   },
   sessionValue: {
     fontSize: '0.85em',
     color: '#1f2937',
     fontWeight: '600'
   },
+  sessionValueMobile: {
+    fontSize: '0.8em',
+    color: '#1f2937',
+    fontWeight: '600'
+  },
+
+  // Empty State
   emptyState: {
     textAlign: 'center',
     padding: '60px 20px',
-    color: '#9ca3af'
+    color: '#9ca3af',
+    '@media (max-width: 768px)': {
+      padding: '40px 16px'
+    }
   },
   emptyIcon: {
     width: '64px',
     height: '64px',
     margin: '0 auto 16px',
-    color: '#d1d5db'
+    color: '#d1d5db',
+    '@media (max-width: 768px)': {
+      width: '48px',
+      height: '48px'
+    }
   },
   emptyText: {
     fontSize: '1em',
-    fontWeight: '500'
+    fontWeight: '500',
+    '@media (max-width: 768px)': {
+      fontSize: '0.9em'
+    }
   },
-  // Footer
+
+  // Footer - Responsive
   footer: {
     background: 'white',
     borderRadius: '20px',
     overflow: 'hidden',
-    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)'
+    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
+    '@media (max-width: 768px)': {
+      borderRadius: '16px'
+    }
   },
   footerContent: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
     gap: '40px',
     padding: '40px'
+  },
+  footerContentTablet: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '32px',
+    padding: '32px'
+  },
+  footerContentMobile: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px',
+    padding: '24px'
   },
   footerSection: {
     display: 'flex',
@@ -1041,15 +1327,27 @@ const styles = {
     alignItems: 'center',
     gap: '12px',
     color: '#6b7280',
-    fontSize: '0.9em'
+    fontSize: '0.9em',
+    '@media (max-width: 768px)': {
+      gap: '8px'
+    }
   },
   contactIcon: {
     fontSize: '1.1em'
   },
+  contactText: {
+    fontSize: '0.9em'
+  },
+  contactTextMobile: {
+    fontSize: '0.85em'
+  },
   footerBottom: {
     borderTop: '1px solid #e5e7eb',
     padding: '24px 40px',
-    background: '#f9fafb'
+    background: '#f9fafb',
+    '@media (max-width: 768px)': {
+      padding: '20px 24px'
+    }
   },
   footerBottomContent: {
     display: 'flex',
@@ -1058,6 +1356,12 @@ const styles = {
     flexWrap: 'wrap',
     gap: '16px'
   },
+  footerBottomContentMobile: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+    textAlign: 'center'
+  },
   copyright: {
     color: '#6b7280',
     fontSize: '0.85em',
@@ -1065,7 +1369,10 @@ const styles = {
   },
   socialLinks: {
     display: 'flex',
-    gap: '20px'
+    gap: '20px',
+    '@media (max-width: 768px)': {
+      gap: '16px'
+    }
   },
   socialLink: {
     color: '#6b7280',
