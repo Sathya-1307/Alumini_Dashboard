@@ -4,6 +4,7 @@ export default function MentorshipDashboard() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchMentor, setSearchMentor] = useState('');
   const [activePhase, setActivePhase] = useState('phase_2024_q4');
+  const [currentSessionIndex, setCurrentSessionIndex] = useState(0);
 
   // Sample data - In production, this would come from an API
   const dashboardStats = {
@@ -45,7 +46,7 @@ export default function MentorshipDashboard() {
       name: 'Q3 2024',
       period: 'Jul - Sep 2024',
       status: 'completed',
-      totalMeetings: 172, // 158 completed + 7 remaining + 7 postponed
+      totalMeetings: 172,
       completedMeetings: 158,
       postponedMeetings: 7,
       mentorsActive: 22,
@@ -75,7 +76,9 @@ export default function MentorshipDashboard() {
       time: '10:00 AM',
       status: 'completed',
       topic: 'Web Development Basics',
-      phase: 'phase_2024_q4'
+      phase: 'phase_2024_q4',
+      duration: '60 mins',
+      meetingType: 'Virtual'
     },
     {
       id: 2,
@@ -85,7 +88,9 @@ export default function MentorshipDashboard() {
       time: '2:00 PM',
       status: 'upcoming',
       topic: 'Machine Learning Fundamentals',
-      phase: 'phase_2024_q4'
+      phase: 'phase_2024_q4',
+      duration: '90 mins',
+      meetingType: 'In-person'
     },
     {
       id: 3,
@@ -95,7 +100,9 @@ export default function MentorshipDashboard() {
       time: '11:00 AM',
       status: 'completed',
       topic: 'React Best Practices',
-      phase: 'phase_2024_q4'
+      phase: 'phase_2024_q4',
+      duration: '75 mins',
+      meetingType: 'Virtual'
     },
     {
       id: 4,
@@ -105,7 +112,9 @@ export default function MentorshipDashboard() {
       time: '3:30 PM',
       status: 'upcoming',
       topic: 'Data Structures & Algorithms',
-      phase: 'phase_2024_q4'
+      phase: 'phase_2024_q4',
+      duration: '120 mins',
+      meetingType: 'Virtual'
     },
     {
       id: 5,
@@ -115,7 +124,9 @@ export default function MentorshipDashboard() {
       time: '4:00 PM',
       status: 'postponed',
       topic: 'Python Programming',
-      phase: 'phase_2024_q4'
+      phase: 'phase_2024_q4',
+      duration: '60 mins',
+      meetingType: 'In-person'
     }
   ];
 
@@ -159,7 +170,7 @@ export default function MentorshipDashboard() {
       return acc;
     }, {});
 
-  // Filter sessions based on status ONLY (independent of phase)
+  // Filter sessions based on status and phase
   const filteredSessions = sessions.filter(session => {
     const statusMatch = filterStatus === 'all' || session.status === filterStatus;
     const phaseMatch = activePhase === 'all' || session.phase === activePhase;
@@ -171,7 +182,7 @@ export default function MentorshipDashboard() {
     activePhase === 'all' || phase.id === activePhase
   );
 
-  // Filter mentor capacity data based on search ONLY (independent of phase)
+  // Filter mentor capacity data based on search
   const filteredMentorCapacity = Object.entries(mentorCapacityData)
     .filter(([mentorName]) => 
       !searchMentor || mentorName.toLowerCase().includes(searchMentor.toLowerCase())
@@ -180,6 +191,23 @@ export default function MentorshipDashboard() {
       acc[mentorName] = data;
       return acc;
     }, {});
+
+  // Carousel navigation functions
+  const nextSession = () => {
+    setCurrentSessionIndex((prevIndex) => 
+      prevIndex === filteredSessions.length - 1 ? 0 : prevIndex + 1
+    );
+  };
+
+  const prevSession = () => {
+    setCurrentSessionIndex((prevIndex) => 
+      prevIndex === 0 ? filteredSessions.length - 1 : prevIndex - 1
+    );
+  };
+
+  const goToSession = (index) => {
+    setCurrentSessionIndex(index);
+  };
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -331,6 +359,22 @@ export default function MentorshipDashboard() {
             </svg>
           </div>
         );
+      case 'chevron-left':
+        return (
+          <div style={iconStyle}>
+            <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </div>
+        );
+      case 'chevron-right':
+        return (
+          <div style={iconStyle}>
+            <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        );
       default:
         return null;
     }
@@ -425,7 +469,10 @@ export default function MentorshipDashboard() {
                   {mentorshipPhases.map(phase => (
                     <button
                       key={phase.id}
-                      onClick={() => setActivePhase(phase.id)}
+                      onClick={() => {
+                        setActivePhase(phase.id);
+                        setCurrentSessionIndex(0);
+                      }}
                       style={{
                         ...styles.filterBtn,
                         ...(activePhase === phase.id ? {
@@ -545,7 +592,7 @@ export default function MentorshipDashboard() {
           )}
         </div>
 
-        {/* Mentor Capacity Section - Now with Search */}
+        {/* Mentor Capacity Section */}
         <div style={styles.capacityCard}>
           <div style={styles.capacityHeader}>
             <div style={styles.capacityTitleSection}>
@@ -555,7 +602,7 @@ export default function MentorshipDashboard() {
               </h2>
             </div>
             
-            {/* Search Box Moved Here */}
+            {/* Search Box */}
             <div style={styles.searchBox}>
               <CustomIcon type="search" size={20} color="#9ca3af" />
               <input
@@ -640,10 +687,10 @@ export default function MentorshipDashboard() {
           )}
         </div>
 
-        {/* Sessions Section - Status Filter Only Here */}
+        {/* Sessions Section - Carousel */}
         <div style={styles.sessionsCard}>
           <div style={styles.sessionsHeader}>
-            <div>
+            <div style={styles.sessionsTitleSection}>
               <h2 style={styles.sessionsTitle}>
                 All Sessions
               </h2>
@@ -652,13 +699,16 @@ export default function MentorshipDashboard() {
               </div>
             </div>
             
-            {/* Status Filter - Only in Sessions Section */}
+            {/* Status Filter */}
             <div style={styles.filterContainer}>
               <div style={styles.filterGroup}>
                 <span style={styles.filterLabel}>Filter by Status:</span>
                 <div style={styles.filterButtons}>
                   <button
-                    onClick={() => setFilterStatus('all')}
+                    onClick={() => {
+                      setFilterStatus('all');
+                      setCurrentSessionIndex(0);
+                    }}
                     style={{
                       ...styles.filterBtn,
                       ...(filterStatus === 'all' ? styles.filterBtnActive : {})
@@ -667,7 +717,10 @@ export default function MentorshipDashboard() {
                     All
                   </button>
                   <button
-                    onClick={() => setFilterStatus('completed')}
+                    onClick={() => {
+                      setFilterStatus('completed');
+                      setCurrentSessionIndex(0);
+                    }}
                     style={{
                       ...styles.filterBtn,
                       ...(filterStatus === 'completed' ? styles.filterBtnActiveGreen : {})
@@ -676,7 +729,10 @@ export default function MentorshipDashboard() {
                     Completed
                   </button>
                   <button
-                    onClick={() => setFilterStatus('upcoming')}
+                    onClick={() => {
+                      setFilterStatus('upcoming');
+                      setCurrentSessionIndex(0);
+                    }}
                     style={{
                       ...styles.filterBtn,
                       ...(filterStatus === 'upcoming' ? styles.filterBtnActiveBlue : {})
@@ -685,7 +741,10 @@ export default function MentorshipDashboard() {
                     Upcoming
                   </button>
                   <button
-                    onClick={() => setFilterStatus('postponed')}
+                    onClick={() => {
+                      setFilterStatus('postponed');
+                      setCurrentSessionIndex(0);
+                    }}
                     style={{
                       ...styles.filterBtn,
                       ...(filterStatus === 'postponed' ? styles.filterBtnActiveAmber : {})
@@ -709,80 +768,125 @@ export default function MentorshipDashboard() {
               </p>
             </div>
           ) : (
-            <div style={styles.sessionsGrid}>
-              {filteredSessions.map(session => {
-                const statusColors = getStatusColor(session.status);
-                const phase = mentorshipPhases.find(p => p.id === session.phase);
-                return (
-                  <div key={session.id} style={styles.sessionCard}>
-                    <div style={styles.sessionHeader}>
-                      <span style={styles.sessionIcon}>{getStatusIcon(session.status)}</span>
-                      <span style={styles.sessionTopic}>{session.topic}</span>
-                      <div style={styles.sessionBadges}>
-                        <span style={{
-                          ...styles.phaseBadgeSmall,
-                          background: getPhaseStatusColor(phase?.status || 'completed')
-                        }}>
-                          {phase?.name}
-                        </span>
-                        <span style={{
-                          ...styles.statusBadge,
-                          background: statusColors.background,
-                          color: statusColors.color,
-                          borderColor: statusColors.border
-                        }}>
-                          {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div style={styles.sessionDetails}>
-                      <div style={styles.sessionRow}>
-                        <CustomIcon type="mentor" size={18} color="#8b5cf6" />
-                        <div style={styles.sessionDetailText}>
-                          <span style={styles.sessionLabel}>Mentor:</span>
-                          <span style={styles.sessionValue}>{session.mentorName}</span>
+            <div style={styles.carouselContainer}>
+              {/* Carousel Navigation */}
+              <div style={styles.carouselHeader}>
+                <div style={styles.carouselInfo}>
+                  <span style={styles.carouselCounter}>
+                    Session {currentSessionIndex + 1} of {filteredSessions.length}
+                  </span>
+                </div>
+                <div style={styles.carouselControls}>
+                  <button 
+                    onClick={prevSession}
+                    style={styles.carouselBtn}
+                    disabled={filteredSessions.length <= 1}
+                  >
+                    <CustomIcon type="chevron-left" size={20} color="#6b7280" />
+                  </button>
+                  <button 
+                    onClick={nextSession}
+                    style={styles.carouselBtn}
+                    disabled={filteredSessions.length <= 1}
+                  >
+                    <CustomIcon type="chevron-right" size={20} color="#6b7280" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Carousel Content */}
+              <div style={styles.carouselContent}>
+                {filteredSessions.map((session, index) => (
+                  <div
+                    key={session.id}
+                    style={{
+                      ...styles.carouselSlide,
+                      ...(index === currentSessionIndex ? styles.carouselSlideActive : styles.carouselSlideInactive)
+                    }}
+                  >
+                    <div style={styles.sessionCard}>
+                      <div style={styles.sessionHeader}>
+                        <div style={styles.sessionIconContainer}>
+                          <span style={styles.sessionIcon}>{getStatusIcon(session.status)}</span>
+                        </div>
+                        <div style={styles.sessionMainInfo}>
+                          <h3 style={styles.sessionTopic}>{session.topic}</h3>
+                          <div style={styles.sessionMeta}>
+                            <span style={styles.sessionDateTime}>
+                              {new Date(session.date).toLocaleDateString('en-US', { 
+                                weekday: 'long',
+                                month: 'long', 
+                                day: 'numeric',
+                                year: 'numeric'
+                              })} • {session.time}
+                            </span>
+                            <span style={styles.sessionDetailsMeta}>
+                              {session.duration} • {session.meetingType}
+                            </span>
+                          </div>
                         </div>
                       </div>
-
-                      <div style={styles.sessionRow}>
-                        <CustomIcon type="mentee" size={18} color="#8b5cf6" />
-                        <div style={styles.sessionDetailText}>
-                          <span style={styles.sessionLabel}>Mentee:</span>
-                          <span style={styles.sessionValue}>{session.menteeName}</span>
+                      
+                      <div style={styles.sessionContent}>
+                        <div style={styles.sessionParticipants}>
+                          <div style={styles.participantCard}>
+                            <CustomIcon type="mentor" size={24} color="#8b5cf6" />
+                            <div style={styles.participantInfo}>
+                              <span style={styles.participantRole}>Mentor</span>
+                              <span style={styles.participantName}>{session.mentorName}</span>
+                            </div>
+                          </div>
+                          <div style={styles.participantCard}>
+                            <CustomIcon type="mentee" size={24} color="#3b82f6" />
+                            <div style={styles.participantInfo}>
+                              <span style={styles.participantRole}>Mentee</span>
+                              <span style={styles.participantName}>{session.menteeName}</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-
-                      <div style={styles.sessionRow}>
-                        <CustomIcon type="meeting" size={18} color="#8b5cf6" />
-                        <div style={styles.sessionDetailText}>
-                          <span style={styles.sessionLabel}>Date:</span>
-                          <span style={styles.sessionValue}>
-                            {new Date(session.date).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric', 
-                              year: 'numeric' 
-                            })}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div style={styles.sessionRow}>
-                        <CustomIcon type="postponed" size={18} color="#8b5cf6" />
-                        <div style={styles.sessionDetailText}>
-                          <span style={styles.sessionLabel}>Time:</span>
-                          <span style={styles.sessionValue}>{session.time}</span>
+                        
+                        <div style={styles.sessionStatusSection}>
+                          <div style={styles.statusBadges}>
+                            <span style={{
+                              ...styles.phaseBadgeSmall,
+                              background: getPhaseStatusColor('active')
+                            }}>
+                              {mentorshipPhases.find(p => p.id === session.phase)?.name}
+                            </span>
+                            <span style={{
+                              ...styles.statusBadge,
+                              ...getStatusColor(session.status)
+                            }}>
+                              {getStatusIcon(session.status)} {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                );
-              })}
+                ))}
+              </div>
+
+              {/* Carousel Indicators */}
+              {filteredSessions.length > 1 && (
+                <div style={styles.carouselIndicators}>
+                  {filteredSessions.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSession(index)}
+                      style={{
+                        ...styles.carouselIndicator,
+                        ...(index === currentSessionIndex ? styles.carouselIndicatorActive : {})
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
 
-        {/* Enhanced Footer */}
+        {/* Footer */}
         <footer style={styles.footer}>
           <div style={styles.footerContent}>
             <div style={styles.footerSection}>
@@ -1079,7 +1183,7 @@ const styles = {
     borderRadius: '6px',
     border: '1px solid #e5e7eb',
   },
-  // Capacity Section with Search
+  // Capacity Section
   capacityCard: {
     background: 'white',
     borderRadius: '16px',
@@ -1110,7 +1214,6 @@ const styles = {
     fontSize: '0.9rem',
     marginBottom: '20px',
   },
-  // Search Box Styles for Capacity Section
   searchBox: {
     position: 'relative',
     display: 'flex',
@@ -1226,7 +1329,7 @@ const styles = {
     color: '#8b5cf6',
     fontWeight: 'bold'
   },
-  // Sessions Section
+  // Sessions Section - Carousel
   sessionsCard: {
     background: 'white',
     borderRadius: '16px',
@@ -1241,10 +1344,16 @@ const styles = {
     gap: '16px',
     marginBottom: '24px',
   },
+  sessionsTitleSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '8px'
+  },
   sessionsTitle: {
     fontSize: 'clamp(1.1rem, 3vw, 1.25rem)',
     fontWeight: '700',
     color: '#1f2937',
+    margin: '0',
   },
   sessionCount: {
     fontSize: '0.85rem',
@@ -1253,7 +1362,7 @@ const styles = {
     background: '#f3f4f6',
     padding: '6px 12px',
     borderRadius: '6px',
-    marginTop: '8px',
+    alignSelf: 'flex-start'
   },
   filterContainer: {
     display: 'flex',
@@ -1277,7 +1386,7 @@ const styles = {
     gap: '8px'
   },
   filterBtn: {
-    padding: '6px 12px',
+    padding: '8px 16px',
     border: '1.5px solid #e5e7eb',
     borderRadius: '8px',
     background: 'white',
@@ -1287,7 +1396,7 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.2s ease',
     flex: '1',
-    minWidth: '60px',
+    minWidth: '80px',
   },
   filterBtnActive: {
     background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
@@ -1309,94 +1418,225 @@ const styles = {
     color: 'white',
     borderColor: '#f59e0b'
   },
-  sessionsGrid: {
-    display: 'grid',
-    gridTemplateColumns: '1fr',
-    gap: '16px',
+  // Carousel Styles
+  carouselContainer: {
+    position: 'relative',
+    width: '100%',
+  },
+  carouselHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+    flexWrap: 'wrap',
+    gap: '16px'
+  },
+  carouselInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px'
+  },
+  carouselCounter: {
+    fontSize: '0.9rem',
+    fontWeight: '600',
+    color: '#6b7280',
+    background: '#f3f4f6',
+    padding: '6px 12px',
+    borderRadius: '20px'
+  },
+  carouselControls: {
+    display: 'flex',
+    gap: '8px'
+  },
+  carouselBtn: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    border: '1.5px solid #e5e7eb',
+    background: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+  },
+  carouselContent: {
+    position: 'relative',
+    width: '100%',
+    overflow: 'hidden',
+    minHeight: '300px'
+  },
+  carouselSlide: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    transition: 'transform 0.3s ease, opacity 0.3s ease',
+    opacity: 0,
+    transform: 'translateX(100%)'
+  },
+  carouselSlideActive: {
+    position: 'relative',
+    opacity: 1,
+    transform: 'translateX(0)'
+  },
+  carouselSlideInactive: {
+    opacity: 0,
+    transform: 'translateX(-100%)'
   },
   sessionCard: {
-    background: '#f9fafb',
-    border: '1.5px solid #e5e7eb',
-    borderRadius: '12px',
-    padding: '16px',
-    transition: 'all 0.2s ease',
-    borderLeft: '4px solid #8b5cf6',
+    background: 'white',
+    border: '1.5px solid #f1f5f9',
+    borderRadius: '16px',
+    padding: '24px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+    transition: 'all 0.3s ease',
+    minHeight: '280px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '20px'
   },
   sessionHeader: {
     display: 'flex',
+    alignItems: 'flex-start',
+    gap: '16px',
+  },
+  sessionIconContainer: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '12px',
+    background: '#f8fafc',
+    display: 'flex',
     alignItems: 'center',
-    gap: '8px',
-    marginBottom: '12px',
-    paddingBottom: '12px',
-    borderBottom: '1px solid #e5e7eb',
-    flexWrap: 'wrap'
+    justifyContent: 'center',
+    border: '1.5px solid #e2e8f0',
+    flexShrink: 0
   },
   sessionIcon: {
-    fontSize: '1.1rem',
+    fontSize: '1.5rem',
+  },
+  sessionMainInfo: {
+    flex: '1'
   },
   sessionTopic: {
-    flex: '1',
-    fontSize: '0.9rem',
+    fontSize: '1.25rem',
     fontWeight: '700',
     color: '#1f2937',
-    minWidth: '120px'
+    margin: '0 0 12px 0',
+    lineHeight: '1.3'
   },
-  sessionBadges: {
+  sessionMeta: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '4px',
+    gap: '4px'
+  },
+  sessionDateTime: {
+    fontSize: '0.95rem',
+    color: '#6b7280',
+    fontWeight: '500'
+  },
+  sessionDetailsMeta: {
+    fontSize: '0.85rem',
+    color: '#9ca3af',
+    fontWeight: '500'
+  },
+  sessionContent: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    gap: '24px',
+    flexWrap: 'wrap'
+  },
+  sessionParticipants: {
+    display: 'flex',
+    gap: '20px',
+    flexWrap: 'wrap'
+  },
+  participantCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '12px 16px',
+    background: '#f8fafc',
+    borderRadius: '10px',
+    border: '1px solid #e2e8f0',
+    minWidth: '180px'
+  },
+  participantInfo: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+  participantRole: {
+    fontSize: '0.75rem',
+    color: '#6b7280',
+    fontWeight: '500',
+    marginBottom: '2px'
+  },
+  participantName: {
+    fontSize: '0.9rem',
+    color: '#1f2937',
+    fontWeight: '600'
+  },
+  sessionStatusSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
     alignItems: 'flex-end'
   },
+  statusBadges: {
+    display: 'flex',
+    gap: '8px',
+    alignItems: 'center'
+  },
   phaseBadgeSmall: {
-    padding: '2px 6px',
-    borderRadius: '4px',
-    fontSize: '0.65rem',
+    padding: '6px 12px',
+    borderRadius: '8px',
+    fontSize: '0.75rem',
     fontWeight: '600',
     color: 'white',
   },
   statusBadge: {
-    padding: '3px 8px',
-    borderRadius: '6px',
-    fontSize: '0.7rem',
+    padding: '6px 12px',
+    borderRadius: '8px',
+    fontSize: '0.75rem',
     fontWeight: '600',
     border: '1px solid',
-  },
-  sessionDetails: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-  },
-  sessionRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '10px'
+    gap: '4px'
   },
-  sessionDetailText: {
+  carouselIndicators: {
     display: 'flex',
-    gap: '6px',
+    justifyContent: 'center',
     alignItems: 'center',
-    flex: '1',
-    flexWrap: 'wrap'
+    gap: '8px',
+    marginTop: '24px',
+    padding: '16px 0'
   },
-  sessionLabel: {
-    fontSize: '0.8rem',
-    color: '#6b7280',
-    fontWeight: '500',
-    minWidth: '50px',
+  carouselIndicator: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: '#e5e7eb',
+    border: 'none',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
   },
-  sessionValue: {
-    fontSize: '0.8rem',
-    color: '#1f2937',
-    fontWeight: '600',
+  carouselIndicatorActive: {
+    width: '24px',
+    borderRadius: '12px',
+    background: '#8b5cf6'
   },
   emptyState: {
     textAlign: 'center',
-    padding: '40px 20px',
+    padding: '60px 20px',
     color: '#9ca3af',
   },
   emptyText: {
     fontSize: '0.9rem',
     fontWeight: '500',
+    marginTop: '12px'
   },
   // Footer
   footer: {
