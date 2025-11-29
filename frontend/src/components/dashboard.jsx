@@ -19,6 +19,31 @@ export default function MentorshipDashboard() {
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
 
+  // Helper function to format semester names for mobile
+  const getMobileSemesterText = (semesterName) => {
+    if (semesterName === 'Durpec 2023') {
+      return 'Dur 23'; // Special case for Durpec
+    }
+    
+    // For standard patterns like "Jan-Jun 2022"
+    const parts = semesterName.split(' ');
+    if (parts.length >= 2) {
+      const period = parts[0]; // "Jan-Jun"
+      const year = parts[1]; // "2022"
+      
+      // Extract first 3 chars of period and last 2 digits of year
+      const shortPeriod = period.includes('-') 
+        ? period.split('-').map(p => p.substring(0, 3)).join('-')
+        : period.substring(0, 3);
+      
+      const shortYear = year.length === 4 ? year.slice(-2) : year;
+      
+      return `${shortPeriod} ${shortYear}`;
+    }
+    
+    return semesterName; // Fallback
+  };
+
   // Sample data - In production, this would come from an API
   const dashboardStats = {
     totalMentors: 24,
@@ -596,7 +621,7 @@ export default function MentorshipDashboard() {
                         } : {})
                       }}
                     >
-                      {isMobile ? phase.name.split(' ')[1] + ' ' + phase.name.split(' ')[0].slice(-2) : phase.name}
+                      {isMobile ? getMobileSemesterText(phase.name) : phase.name}
                     </button>
                   ))}
                 </div>
@@ -997,7 +1022,7 @@ export default function MentorshipDashboard() {
                               ...styles.phaseBadgeSmall,
                               background: getPhaseStatusColor('active')
                             }}>
-                              {isMobile ? mentorshipPhases.find(p => p.id === session.phase)?.name.split(' ')[1] + ' ' + mentorshipPhases.find(p => p.id === session.phase)?.name.split(' ')[0].slice(-2) : mentorshipPhases.find(p => p.id === session.phase)?.name}
+                              {isMobile ? getMobileSemesterText(mentorshipPhases.find(p => p.id === session.phase)?.name) : mentorshipPhases.find(p => p.id === session.phase)?.name}
                             </span>
                             <span style={{
                               ...styles.statusBadge,
