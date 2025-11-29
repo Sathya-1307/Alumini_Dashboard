@@ -1,10 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function MentorshipDashboard() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [searchMentor, setSearchMentor] = useState('');
-  const [activePhase, setActivePhase] = useState('phase_2024_q4');
+  const [activePhase, setActivePhase] = useState('phase_2024_h2');
   const [currentSessionIndex, setCurrentSessionIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Check screen size on mount and resize
+  useEffect(() => {
+    const checkScreenSize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   // Sample data - In production, this would come from an API
   const dashboardStats = {
@@ -15,55 +28,91 @@ export default function MentorshipDashboard() {
     postponedMeetings: 5
   };
 
-  // Phases data - Time-based phases (semesters/quarters)
+  // Phases data - Semester-based phases (6-month periods)
   const mentorshipPhases = [
     {
-      id: 'phase_2024_q1',
-      name: 'Q1 2024',
-      period: 'Jan - Mar 2024',
+      id: 'phase_2022_h1',
+      name: 'Jan-Jun 2022',
+      period: 'January - June 2022',
       status: 'completed',
       totalMeetings: 156,
       completedMeetings: 148,
       postponedMeetings: 8,
       mentorsActive: 18,
       menteesActive: 52,
+      newMentors: 18,
+      newMentees: 52,
       focusAreas: ['Web Development', 'Data Science', 'Cloud Computing']
     },
     {
-      id: 'phase_2024_q2',
-      name: 'Q2 2024',
-      period: 'Apr - Jun 2024',
+      id: 'phase_2022_h2',
+      name: 'Jul-Dec 2022',
+      period: 'July - December 2022',
       status: 'completed',
       totalMeetings: 142,
       completedMeetings: 142,
       postponedMeetings: 0,
-      mentorsActive: 20,
+      mentorsActive: 22,
       menteesActive: 58,
+      newMentors: 4,
+      newMentees: 6,
       focusAreas: ['AI/ML', 'Mobile Development', 'DevOps']
     },
     {
-      id: 'phase_2024_q3',
-      name: 'Q3 2024',
-      period: 'Jul - Sep 2024',
+      id: 'phase_2023_h1',
+      name: 'Jan-Jun 2023',
+      period: 'January - June 2023',
       status: 'completed',
       totalMeetings: 172,
       completedMeetings: 158,
       postponedMeetings: 7,
-      mentorsActive: 22,
-      menteesActive: 62,
+      mentorsActive: 25,
+      menteesActive: 65,
+      newMentors: 3,
+      newMentees: 7,
       focusAreas: ['Cybersecurity', 'Blockchain', 'UI/UX Design']
     },
     {
-      id: 'phase_2024_q4',
-      name: 'Q4 2024',
-      period: 'Oct - Dec 2024',
-      status: 'active',
+      id: 'phase_2023_h2',
+      name: 'Jul-Dec 2023',
+      period: 'July - December 2023',
+      status: 'completed',
       totalMeetings: 180,
+      completedMeetings: 175,
+      postponedMeetings: 5,
+      mentorsActive: 26,
+      menteesActive: 68,
+      newMentors: 1,
+      newMentees: 3,
+      focusAreas: ['Full Stack', 'Data Engineering', 'Cloud Architecture']
+    },
+    {
+      id: 'phase_2024_h1',
+      name: 'Jan-Jun 2024',
+      period: 'January - June 2024',
+      status: 'completed',
+      totalMeetings: 190,
+      completedMeetings: 185,
+      postponedMeetings: 5,
+      mentorsActive: 28,
+      menteesActive: 72,
+      newMentors: 2,
+      newMentees: 4,
+      focusAreas: ['AI Engineering', 'Mobile Apps', 'System Design']
+    },
+    {
+      id: 'phase_2024_h2',
+      name: 'Jul-Dec 2024',
+      period: 'July - December 2024',
+      status: 'active',
+      totalMeetings: 200,
       completedMeetings: 142,
       postponedMeetings: 5,
-      mentorsActive: 24,
-      menteesActive: 68,
-      focusAreas: ['Full Stack', 'Data Engineering', 'Cloud Architecture']
+      mentorsActive: 30,
+      menteesActive: 75,
+      newMentors: 2,
+      newMentees: 3,
+      focusAreas: ['Advanced Web', 'Machine Learning', 'Cloud Native']
     }
   ];
 
@@ -76,7 +125,7 @@ export default function MentorshipDashboard() {
       time: '10:00 AM',
       status: 'completed',
       topic: 'Web Development Basics',
-      phase: 'phase_2024_q4',
+      phase: 'phase_2024_h2',
       duration: '60 mins',
       meetingType: 'Virtual'
     },
@@ -88,7 +137,7 @@ export default function MentorshipDashboard() {
       time: '2:00 PM',
       status: 'upcoming',
       topic: 'Machine Learning Fundamentals',
-      phase: 'phase_2024_q4',
+      phase: 'phase_2024_h2',
       duration: '90 mins',
       meetingType: 'In-person'
     },
@@ -100,7 +149,7 @@ export default function MentorshipDashboard() {
       time: '11:00 AM',
       status: 'completed',
       topic: 'React Best Practices',
-      phase: 'phase_2024_q4',
+      phase: 'phase_2024_h2',
       duration: '75 mins',
       meetingType: 'Virtual'
     },
@@ -112,7 +161,7 @@ export default function MentorshipDashboard() {
       time: '3:30 PM',
       status: 'upcoming',
       topic: 'Data Structures & Algorithms',
-      phase: 'phase_2024_q4',
+      phase: 'phase_2024_h2',
       duration: '120 mins',
       meetingType: 'Virtual'
     },
@@ -124,9 +173,45 @@ export default function MentorshipDashboard() {
       time: '4:00 PM',
       status: 'postponed',
       topic: 'Python Programming',
-      phase: 'phase_2024_q4',
+      phase: 'phase_2024_h2',
       duration: '60 mins',
       meetingType: 'In-person'
+    },
+    {
+      id: 6,
+      mentorName: 'Dr. Sarah Johnson',
+      menteeName: 'Neha Gupta',
+      date: '2024-05-15',
+      time: '10:00 AM',
+      status: 'completed',
+      topic: 'JavaScript Fundamentals',
+      phase: 'phase_2024_h1',
+      duration: '60 mins',
+      meetingType: 'Virtual'
+    },
+    {
+      id: 7,
+      mentorName: 'Prof. Michael Chen',
+      menteeName: 'Rajesh Kumar',
+      date: '2024-04-20',
+      time: '2:00 PM',
+      status: 'completed',
+      topic: 'Data Analysis Basics',
+      phase: 'phase_2024_h1',
+      duration: '90 mins',
+      meetingType: 'In-person'
+    },
+    {
+      id: 8,
+      mentorName: 'Dr. Emily Rodriguez',
+      menteeName: 'Sneha Patel',
+      date: '2023-11-10',
+      time: '11:00 AM',
+      status: 'completed',
+      topic: 'Cloud Computing Intro',
+      phase: 'phase_2023_h2',
+      duration: '75 mins',
+      meetingType: 'Virtual'
     }
   ];
 
@@ -157,7 +242,7 @@ export default function MentorshipDashboard() {
 
   // Calculate mentor capacity data for current phase
   const mentorCapacityData = sessions
-    .filter(session => session.phase === 'phase_2024_q4')
+    .filter(session => session.phase === 'phase_2024_h2')
     .reduce((acc, session) => {
       if (!acc[session.mentorName]) {
         acc[session.mentorName] = {
@@ -170,16 +255,19 @@ export default function MentorshipDashboard() {
       return acc;
     }, {});
 
-  // Filter sessions based on status and phase
-  const filteredSessions = sessions.filter(session => {
-    const statusMatch = filterStatus === 'all' || session.status === filterStatus;
-    const phaseMatch = activePhase === 'all' || session.phase === activePhase;
-    return statusMatch && phaseMatch;
+  // Filter sessions for the carousel based on status only
+  const filteredSessionsByStatus = sessions.filter(session => {
+    return filterStatus === 'all' || session.status === filterStatus;
   });
 
   // Filter phases based on active phase filter
   const filteredPhases = mentorshipPhases.filter(phase => 
     activePhase === 'all' || phase.id === activePhase
+  );
+
+  // Filter sessions for phase display based on phase only
+  const filteredSessionsByPhase = sessions.filter(session => 
+    activePhase === 'all' || session.phase === activePhase
   );
 
   // Filter mentor capacity data based on search
@@ -192,16 +280,16 @@ export default function MentorshipDashboard() {
       return acc;
     }, {});
 
-  // Carousel navigation functions
+  // Carousel navigation functions - use status-filtered sessions
   const nextSession = () => {
     setCurrentSessionIndex((prevIndex) => 
-      prevIndex === filteredSessions.length - 1 ? 0 : prevIndex + 1
+      prevIndex === filteredSessionsByStatus.length - 1 ? 0 : prevIndex + 1
     );
   };
 
   const prevSession = () => {
     setCurrentSessionIndex((prevIndex) => 
-      prevIndex === 0 ? filteredSessions.length - 1 : prevIndex - 1
+      prevIndex === 0 ? filteredSessionsByStatus.length - 1 : prevIndex - 1
     );
   };
 
@@ -335,7 +423,7 @@ export default function MentorshipDashboard() {
         return (
           <div style={iconStyle}>
             <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
-              <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+              <path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 0 012-2h2a2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 0 012-2h2a2 0 012 2v14a2 0 01-2 2h-2a2 0 01-2-2z"></path>
             </svg>
           </div>
         );
@@ -375,6 +463,39 @@ export default function MentorshipDashboard() {
             </svg>
           </div>
         );
+      case 'new-mentor':
+        return (
+          <div style={iconStyle}>
+            <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+          </div>
+        );
+      case 'new-mentee':
+        return (
+          <div style={iconStyle}>
+            <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="18" y1="9" x2="23" y2="9"></line>
+              <line x1="20.5" y1="6.5" x2="20.5" y2="11.5"></line>
+            </svg>
+          </div>
+        );
+      case 'growth':
+        return (
+          <div style={iconStyle}>
+            <svg viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              <line x1="12" y1="6" x2="12" y2="14"></line>
+              <line x1="9" y1="9" x2="15" y2="9"></line>
+            </svg>
+          </div>
+        );
       default:
         return null;
     }
@@ -386,92 +507,85 @@ export default function MentorshipDashboard() {
         {/* Header */}
         <div style={styles.header}>
           <div style={styles.logo}>
-            <CustomIcon type="mentor" size={36} color="white" />
+            <CustomIcon type="mentor" size={isMobile ? 28 : 36} color="white" />
           </div>
           <h1 style={styles.title}>Mentorship Dashboard</h1>
-          <p style={styles.subtitle}>Quarterly Mentorship Program Performance Tracking</p>
+          <p style={styles.subtitle}>Semester-based Mentorship Program Performance Tracking</p>
         </div>
 
         {/* Stats Cards */}
         <div style={styles.statsGrid}>
           <div style={styles.statCard}>
             <div style={{...styles.statIcon, background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'}}>
-              <CustomIcon type="mentor" size={28} color="white" />
+              <CustomIcon type="mentor" size={isMobile ? 20 : 28} color="white" />
             </div>
             <div style={styles.statContent}>
               <div style={styles.statValue}>{dashboardStats.totalMentors}</div>
               <div style={styles.statLabel}>Active Mentors</div>
-              <div style={styles.statSubtext}>Current Phase: 24</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
             <div style={{...styles.statIcon, background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'}}>
-              <CustomIcon type="mentee" size={28} color="white" />
+              <CustomIcon type="mentee" size={isMobile ? 20 : 28} color="white" />
             </div>
             <div style={styles.statContent}>
               <div style={styles.statValue}>{dashboardStats.totalMentees}</div>
               <div style={styles.statLabel}>Active Mentees</div>
-              <div style={styles.statSubtext}>Current Phase: 68</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
             <div style={{...styles.statIcon, background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'}}>
-              <CustomIcon type="completed" size={28} color="white" />
+              <CustomIcon type="completed" size={isMobile ? 20 : 28} color="white" />
             </div>
             <div style={styles.statContent}>
               <div style={styles.statValue}>{dashboardStats.completedMeetings}</div>
-              <div style={styles.statLabel}>Completed</div>
-              <div style={styles.statSubtext}>Current Phase: 142/180</div>
+              <div style={styles.statLabel}>Meeting Completed</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
             <div style={{...styles.statIcon, background: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)'}}>
-              <CustomIcon type="meeting" size={28} color="white" />
+              <CustomIcon type="meeting" size={isMobile ? 20 : 28} color="white" />
             </div>
             <div style={styles.statContent}>
               <div style={styles.statValue}>{dashboardStats.upcomingMeetings}</div>
-              <div style={styles.statLabel}>Upcoming</div>
-              <div style={styles.statSubtext}>Current Phase: 28</div>
+              <div style={styles.statLabel}>Meeting Upcoming</div>
             </div>
           </div>
 
           <div style={styles.statCard}>
             <div style={{...styles.statIcon, background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)'}}>
-              <CustomIcon type="postponed" size={28} color="white" />
+              <CustomIcon type="postponed" size={isMobile ? 20 : 28} color="white" />
             </div>
             <div style={styles.statContent}>
               <div style={styles.statValue}>{dashboardStats.postponedMeetings}</div>
-              <div style={styles.statLabel}>Postponed</div>
-              <div style={styles.statSubtext}>Current Phase: 5</div>
+              <div style={styles.statLabel}>Meeting Postponed</div>
             </div>
           </div>
         </div>
 
-        {/* Filters Section */}
+        {/* Semester Filter Section */}
         <div style={styles.sessionsCard}>
           <div style={styles.sessionsHeader}>
             <div>
-              <h2 style={styles.sessionsTitle}>Filter Sessions</h2>
+              <h2 style={styles.sessionsTitle}>Filter by Semester</h2>
               <div style={styles.sessionCount}>
-                {filteredSessions.length} session{filteredSessions.length !== 1 ? 's' : ''} found
+                {filteredPhases.length} semester{filteredPhases.length !== 1 ? 's' : ''} selected
               </div>
             </div>
             
-            {/* Filters - Only Phase Filter Here */}
+            {/* Semester Filter */}
             <div style={styles.filterContainer}>
-              {/* Phase Filter */}
               <div style={styles.filterGroup}>
-                <span style={styles.filterLabel}>Filter by Phase:</span>
+                <span style={styles.filterLabel}>Select Semester:</span>
                 <div style={styles.filterButtons}>
                   {mentorshipPhases.map(phase => (
                     <button
                       key={phase.id}
                       onClick={() => {
                         setActivePhase(phase.id);
-                        setCurrentSessionIndex(0);
                       }}
                       style={{
                         ...styles.filterBtn,
@@ -482,7 +596,7 @@ export default function MentorshipDashboard() {
                         } : {})
                       }}
                     >
-                      {phase.name}
+                      {isMobile ? phase.name.split(' ')[1] + ' ' + phase.name.split(' ')[0].slice(-2) : phase.name}
                     </button>
                   ))}
                 </div>
@@ -494,32 +608,30 @@ export default function MentorshipDashboard() {
         {/* Mentorship Phases Section */}
         <div style={styles.phasesCard}>
           <div style={styles.phasesHeader}>
-            <CustomIcon type="phases" size={24} color="#8b5cf6" />
+            <CustomIcon type="phases" size={isMobile ? 20 : 24} color="#8b5cf6" />
             <h2 style={styles.phasesTitle}>
-              Program Phases Performance 
+              Program Semesters Performance 
               {activePhase !== 'all' && ` - ${mentorshipPhases.find(p => p.id === activePhase)?.name}`}
             </h2>
           </div>
           <p style={styles.phasesSubtitle}>
             {activePhase === 'all' 
-              ? 'Quarterly mentorship program tracking and performance metrics' 
+              ? 'Semester-based mentorship program tracking and performance metrics' 
               : `Showing details for ${mentorshipPhases.find(p => p.id === activePhase)?.name}`
             }
           </p>
           
           {filteredPhases.length === 0 ? (
             <div style={styles.emptyState}>
-              <CustomIcon type="info" size={64} color="#d1d5db" />
+              <CustomIcon type="info" size={isMobile ? 48 : 64} color="#d1d5db" />
               <p style={styles.emptyText}>
-                No phases found for the current filter
+                No semesters found for the current filter
               </p>
             </div>
           ) : (
             <div style={styles.phasesGrid}>
               {filteredPhases.map(phase => {
                 const stats = phaseStats[phase.id] || { completed: 0, upcoming: 0, postponed: 0, mentors: new Set(), mentees: new Set() };
-                const actualMentors = phase.status === 'active' ? phase.mentorsActive : stats.mentors.size;
-                const actualMentees = phase.status === 'active' ? phase.menteesActive : stats.mentees.size;
                 
                 return (
                   <div key={phase.id} style={styles.phaseCard}>
@@ -530,7 +642,7 @@ export default function MentorshipDashboard() {
                           ...styles.phaseStatus,
                           background: getPhaseStatusColor(phase.status)
                         }}>
-                          {phase.status.charAt(0).toUpperCase() + phase.status.slice(1)}
+                          {isMobile ? phase.status.charAt(0).toUpperCase() : phase.status.charAt(0).toUpperCase() + phase.status.slice(1)}
                         </span>
                       </div>
                       <p style={styles.phasePeriod}>{phase.period}</p>
@@ -558,17 +670,35 @@ export default function MentorshipDashboard() {
                     <div style={styles.participantStats}>
                       <div style={styles.participantRow}>
                         <div style={styles.participantItem}>
-                          <CustomIcon type="mentor" size={20} color="#8b5cf6" />
+                          <CustomIcon type="mentor" size={isMobile ? 16 : 20} color="#8b5cf6" />
                           <div>
-                            <span style={styles.participantCount}>{actualMentors}</span>
-                            <span style={styles.participantLabel}>Mentors</span>
+                            <span style={styles.participantCount}>{phase.mentorsActive}</span>
+                            <span style={styles.participantLabel}>Total Mentors</span>
                           </div>
                         </div>
                         <div style={styles.participantItem}>
-                          <CustomIcon type="mentee" size={20} color="#3b82f6" />
+                          <CustomIcon type="mentee" size={isMobile ? 16 : 20} color="#3b82f6" />
                           <div>
-                            <span style={styles.participantCount}>{actualMentees}</span>
-                            <span style={styles.participantLabel}>Mentees</span>
+                            <span style={styles.participantCount}>{phase.menteesActive}</span>
+                            <span style={styles.participantLabel}>Total Mentees</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* New Participants */}
+                      <div style={styles.newParticipantsRow}>
+                        <div style={styles.newParticipantItem}>
+                          <CustomIcon type="new-mentor" size={isMobile ? 14 : 16} color="#10b981" />
+                          <div>
+                            <span style={styles.newParticipantCount}>{phase.newMentors}</span>
+                            <span style={styles.newParticipantLabel}>New Mentors</span>
+                          </div>
+                        </div>
+                        <div style={styles.newParticipantItem}>
+                          <CustomIcon type="new-mentee" size={isMobile ? 14 : 16} color="#3b82f6" />
+                          <div>
+                            <span style={styles.newParticipantCount}>{phase.newMentees}</span>
+                            <span style={styles.newParticipantLabel}>New Mentees</span>
                           </div>
                         </div>
                       </div>
@@ -585,6 +715,22 @@ export default function MentorshipDashboard() {
                         ))}
                       </div>
                     </div>
+
+                    {/* Sessions in this phase */}
+                    <div style={styles.phaseSessions}>
+                      <span style={styles.topicsLabel}>Sessions in this semester:</span>
+                      <div style={styles.sessionStats}>
+                        <span style={styles.sessionStat}>
+                          Completed: {filteredSessionsByPhase.filter(s => s.status === 'completed' && s.phase === phase.id).length}
+                        </span>
+                        <span style={styles.sessionStat}>
+                          Upcoming: {filteredSessionsByPhase.filter(s => s.status === 'upcoming' && s.phase === phase.id).length}
+                        </span>
+                        <span style={styles.sessionStat}>
+                          Postponed: {filteredSessionsByPhase.filter(s => s.status === 'postponed' && s.phase === phase.id).length}
+                        </span>
+                      </div>
+                    </div>
                   </div>
                 );
               })}
@@ -596,15 +742,15 @@ export default function MentorshipDashboard() {
         <div style={styles.capacityCard}>
           <div style={styles.capacityHeader}>
             <div style={styles.capacityTitleSection}>
-              <CustomIcon type="capacity" size={24} color="#8b5cf6" />
+              <CustomIcon type="capacity" size={isMobile ? 20 : 24} color="#8b5cf6" />
               <h2 style={styles.capacityTitle}>
-                Current Phase Mentor Capacity
+                Current Semester Mentor Capacity
               </h2>
             </div>
             
             {/* Search Box */}
             <div style={styles.searchBox}>
-              <CustomIcon type="search" size={20} color="#9ca3af" />
+              <CustomIcon type="search" size={isMobile ? 16 : 20} color="#9ca3af" />
               <input
                 type="text"
                 placeholder="Search by mentor name..."
@@ -624,13 +770,13 @@ export default function MentorshipDashboard() {
           </div>
           
           <p style={styles.capacitySubtitle}>
-            Q4 2024 - Each mentor supports maximum 3 mentees for personalized attention
+            Jul-Dec 2024 - Each mentor supports maximum 3 mentees for personalized attention
             {searchMentor && ` - Filtered by "${searchMentor}"`}
           </p>
           
           {Object.keys(filteredMentorCapacity).length === 0 ? (
             <div style={styles.emptyState}>
-              <CustomIcon type="info" size={64} color="#d1d5db" />
+              <CustomIcon type="info" size={isMobile ? 48 : 64} color="#d1d5db" />
               <p style={styles.emptyText}>
                 {searchMentor ? `No mentors found for "${searchMentor}"` : 'No mentor data available'}
               </p>
@@ -663,7 +809,7 @@ export default function MentorshipDashboard() {
                     
                     {isOverCapacity && (
                       <div style={styles.capacityStatus}>
-                        <CustomIcon type="warning" size={16} color="#dc2626" />
+                        <CustomIcon type="warning" size={isMobile ? 14 : 16} color="#dc2626" />
                         <span style={styles.statusWarning}>Over capacity</span>
                       </div>
                     )}
@@ -692,10 +838,10 @@ export default function MentorshipDashboard() {
           <div style={styles.sessionsHeader}>
             <div style={styles.sessionsTitleSection}>
               <h2 style={styles.sessionsTitle}>
-                All Sessions
+                All Sessions (Status Filter)
               </h2>
               <div style={styles.sessionCount}>
-                {filteredSessions.length} session{filteredSessions.length !== 1 ? 's' : ''} found
+                {filteredSessionsByStatus.length} session{filteredSessionsByStatus.length !== 1 ? 's' : ''} found
               </div>
             </div>
             
@@ -726,7 +872,7 @@ export default function MentorshipDashboard() {
                       ...(filterStatus === 'completed' ? styles.filterBtnActiveGreen : {})
                     }}
                   >
-                    Completed
+                    {isMobile ? 'Done' : 'Completed'}
                   </button>
                   <button
                     onClick={() => {
@@ -738,7 +884,7 @@ export default function MentorshipDashboard() {
                       ...(filterStatus === 'upcoming' ? styles.filterBtnActiveBlue : {})
                     }}
                   >
-                    Upcoming
+                    {isMobile ? 'Next' : 'Upcoming'}
                   </button>
                   <button
                     onClick={() => {
@@ -750,16 +896,16 @@ export default function MentorshipDashboard() {
                       ...(filterStatus === 'postponed' ? styles.filterBtnActiveAmber : {})
                     }}
                   >
-                    Postponed
+                    {isMobile ? 'Later' : 'Postponed'}
                   </button>
                 </div>
               </div>
             </div>
           </div>
 
-          {filteredSessions.length === 0 ? (
+          {filteredSessionsByStatus.length === 0 ? (
             <div style={styles.emptyState}>
-              <CustomIcon type="info" size={64} color="#d1d5db" />
+              <CustomIcon type="info" size={isMobile ? 48 : 64} color="#d1d5db" />
               <p style={styles.emptyText}>
                 {filterStatus !== 'all'
                   ? `No ${filterStatus} sessions found` 
@@ -773,30 +919,30 @@ export default function MentorshipDashboard() {
               <div style={styles.carouselHeader}>
                 <div style={styles.carouselInfo}>
                   <span style={styles.carouselCounter}>
-                    Session {currentSessionIndex + 1} of {filteredSessions.length}
+                    Session {currentSessionIndex + 1} of {filteredSessionsByStatus.length}
                   </span>
                 </div>
                 <div style={styles.carouselControls}>
                   <button 
                     onClick={prevSession}
                     style={styles.carouselBtn}
-                    disabled={filteredSessions.length <= 1}
+                    disabled={filteredSessionsByStatus.length <= 1}
                   >
-                    <CustomIcon type="chevron-left" size={20} color="#6b7280" />
+                    <CustomIcon type="chevron-left" size={isMobile ? 16 : 20} color="#6b7280" />
                   </button>
                   <button 
                     onClick={nextSession}
                     style={styles.carouselBtn}
-                    disabled={filteredSessions.length <= 1}
+                    disabled={filteredSessionsByStatus.length <= 1}
                   >
-                    <CustomIcon type="chevron-right" size={20} color="#6b7280" />
+                    <CustomIcon type="chevron-right" size={isMobile ? 16 : 20} color="#6b7280" />
                   </button>
                 </div>
               </div>
 
               {/* Carousel Content */}
               <div style={styles.carouselContent}>
-                {filteredSessions.map((session, index) => (
+                {filteredSessionsByStatus.map((session, index) => (
                   <div
                     key={session.id}
                     style={{
@@ -814,14 +960,14 @@ export default function MentorshipDashboard() {
                           <div style={styles.sessionMeta}>
                             <span style={styles.sessionDateTime}>
                               {new Date(session.date).toLocaleDateString('en-US', { 
-                                weekday: 'long',
-                                month: 'long', 
+                                weekday: isMobile ? 'short' : 'long',
+                                month: isMobile ? 'short' : 'long', 
                                 day: 'numeric',
                                 year: 'numeric'
                               })} • {session.time}
                             </span>
                             <span style={styles.sessionDetailsMeta}>
-                              {session.duration} • {session.meetingType}
+                              {session.duration} • {session.meetingType} • {mentorshipPhases.find(p => p.id === session.phase)?.name}
                             </span>
                           </div>
                         </div>
@@ -830,14 +976,14 @@ export default function MentorshipDashboard() {
                       <div style={styles.sessionContent}>
                         <div style={styles.sessionParticipants}>
                           <div style={styles.participantCard}>
-                            <CustomIcon type="mentor" size={24} color="#8b5cf6" />
+                            <CustomIcon type="mentor" size={isMobile ? 20 : 24} color="#8b5cf6" />
                             <div style={styles.participantInfo}>
                               <span style={styles.participantRole}>Mentor</span>
                               <span style={styles.participantName}>{session.mentorName}</span>
                             </div>
                           </div>
                           <div style={styles.participantCard}>
-                            <CustomIcon type="mentee" size={24} color="#3b82f6" />
+                            <CustomIcon type="mentee" size={isMobile ? 20 : 24} color="#3b82f6" />
                             <div style={styles.participantInfo}>
                               <span style={styles.participantRole}>Mentee</span>
                               <span style={styles.participantName}>{session.menteeName}</span>
@@ -851,13 +997,13 @@ export default function MentorshipDashboard() {
                               ...styles.phaseBadgeSmall,
                               background: getPhaseStatusColor('active')
                             }}>
-                              {mentorshipPhases.find(p => p.id === session.phase)?.name}
+                              {isMobile ? mentorshipPhases.find(p => p.id === session.phase)?.name.split(' ')[1] + ' ' + mentorshipPhases.find(p => p.id === session.phase)?.name.split(' ')[0].slice(-2) : mentorshipPhases.find(p => p.id === session.phase)?.name}
                             </span>
                             <span style={{
                               ...styles.statusBadge,
                               ...getStatusColor(session.status)
                             }}>
-                              {getStatusIcon(session.status)} {session.status.charAt(0).toUpperCase() + session.status.slice(1)}
+                              {getStatusIcon(session.status)} {isMobile ? session.status.charAt(0).toUpperCase() + session.status.slice(1,3) : session.status.charAt(0).toUpperCase() + session.status.slice(1)}
                             </span>
                           </div>
                         </div>
@@ -868,9 +1014,9 @@ export default function MentorshipDashboard() {
               </div>
 
               {/* Carousel Indicators */}
-              {filteredSessions.length > 1 && (
+              {filteredSessionsByStatus.length > 1 && (
                 <div style={styles.carouselIndicators}>
-                  {filteredSessions.map((_, index) => (
+                  {filteredSessionsByStatus.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => goToSession(index)}
@@ -891,21 +1037,22 @@ export default function MentorshipDashboard() {
           <div style={styles.footerContent}>
             <div style={styles.footerSection}>
               <h3 style={styles.footerTitle}>
-                <CustomIcon type="mentor" size={20} color="#8b5cf6" /> Mentorship Program
+                <CustomIcon type="mentor" size={isMobile ? 16 : 20} color="#8b5cf6" /> Mentorship Program
               </h3>
               <p style={styles.footerText}>
-                Quarterly structured mentorship program with comprehensive tracking. 
-                Each phase focuses on different technology domains and skill development.
+                Semester-based structured mentorship program with comprehensive tracking. 
+                Each semester focuses on different technology domains and skill development.
               </p>
             </div>
             
             <div style={styles.footerSection}>
-              <h3 style={styles.footerTitle}>Program Phases</h3>
+              <h3 style={styles.footerTitle}>Program Semesters</h3>
               <div style={styles.footerLinks}>
-                <span style={styles.footerLink}>Q1 2024: Web Dev, Data Science</span>
-                <span style={styles.footerLink}>Q2 2024: AI/ML, Mobile, DevOps</span>
-                <span style={styles.footerLink}>Q3 2024: Security, Blockchain</span>
-                <span style={styles.footerLink}>Q4 2024: Full Stack, Cloud</span>
+                {mentorshipPhases.map(phase => (
+                  <span key={phase.id} style={styles.footerLink}>
+                    {phase.name}: {phase.focusAreas.slice(0, 2).join(', ')}
+                  </span>
+                ))}
               </div>
             </div>
             
@@ -931,7 +1078,7 @@ export default function MentorshipDashboard() {
           <div style={styles.footerBottom}>
             <div style={styles.footerBottomContent}>
               <p style={styles.copyright}>
-                © 2024 Mentorship Program. Quarterly Performance Tracking.
+                © 2024 Mentorship Program. Semester-based Performance Tracking.
               </p>
               <div style={styles.socialLinks}>
                 <a href="#" style={styles.socialLink}>Twitter</a>
@@ -953,14 +1100,23 @@ const styles = {
     background: 'linear-gradient(180deg, #e9d5ff 0%, #f3e8ff 30%, #e0e7ff 60%, #dbeafe 100%)',
     padding: '16px',
     fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+    '@media (max-width: 768px)': {
+      padding: '12px',
+    },
   },
   container: {
     maxWidth: '1400px',
-    margin: '0 auto'
+    margin: '0 auto',
+    '@media (max-width: 768px)': {
+      maxWidth: '100%',
+    },
   },
   header: {
     textAlign: 'center',
     marginBottom: '32px',
+    '@media (max-width: 768px)': {
+      marginBottom: '24px',
+    },
   },
   logo: {
     width: '60px',
@@ -972,6 +1128,12 @@ const styles = {
     justifyContent: 'center',
     margin: '0 auto 20px',
     boxShadow: '0 8px 24px rgba(139, 92, 246, 0.35)',
+    '@media (max-width: 768px)': {
+      width: '50px',
+      height: '50px',
+      borderRadius: '12px',
+      marginBottom: '16px',
+    },
   },
   title: {
     fontSize: 'clamp(1.5rem, 4vw, 1.75rem)',
@@ -981,17 +1143,33 @@ const styles = {
     WebkitTextFillColor: 'transparent',
     backgroundClip: 'text',
     marginBottom: '8px',
+    '@media (max-width: 768px)': {
+      fontSize: '1.25rem',
+      marginBottom: '6px',
+    },
   },
   subtitle: {
     color: '#6b7280',
     fontSize: 'clamp(0.8rem, 2vw, 0.9rem)',
     fontWeight: '400',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+    },
   },
   statsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gap: '16px',
     marginBottom: '32px',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))',
+      gap: '12px',
+      marginBottom: '24px',
+    },
+    '@media (max-width: 480px)': {
+      gridTemplateColumns: 'repeat(2, 1fr)',
+      gap: '10px',
+    },
   },
   statCard: {
     background: 'white',
@@ -1003,6 +1181,16 @@ const styles = {
     boxShadow: '0 4px 12px rgba(0, 0, 0, 0.08)',
     transition: 'all 0.3s ease',
     border: '1px solid #f1f5f9',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      gap: '12px',
+      flexDirection: 'column',
+      textAlign: 'center',
+    },
+    '@media (max-width: 480px)': {
+      padding: '12px',
+      gap: '8px',
+    },
   },
   statIcon: {
     width: '48px',
@@ -1012,27 +1200,43 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    '@media (max-width: 768px)': {
+      width: '40px',
+      height: '40px',
+      borderRadius: '8px',
+    },
+    '@media (max-width: 480px)': {
+      width: '36px',
+      height: '36px',
+    },
   },
   statContent: {
-    flex: '1'
+    flex: '1',
+    '@media (max-width: 768px)': {
+      width: '100%',
+    },
   },
   statValue: {
     fontSize: '1.5rem',
     fontWeight: '800',
     color: '#1f2937',
     lineHeight: '1',
+    '@media (max-width: 768px)': {
+      fontSize: '1.25rem',
+    },
+    '@media (max-width: 480px)': {
+      fontSize: '1.1rem',
+    },
   },
   statLabel: {
     fontSize: '0.8rem',
     color: '#6b7280',
     fontWeight: '500',
     marginTop: '4px',
-  },
-  statSubtext: {
-    fontSize: '0.7rem',
-    color: '#9ca3af',
-    fontWeight: '400',
-    marginTop: '2px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+      marginTop: '2px',
+    },
   },
   // Phases Section
   phasesCard: {
@@ -1042,29 +1246,48 @@ const styles = {
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
     marginBottom: '24px',
     border: '1px solid #f1f5f9',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      borderRadius: '12px',
+      marginBottom: '20px',
+    },
   },
   phasesHeader: {
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     marginBottom: '8px',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+      marginBottom: '6px',
+    },
   },
   phasesTitle: {
     fontSize: 'clamp(1.1rem, 3vw, 1.25rem)',
     fontWeight: '700',
     color: '#1f2937',
     margin: '0',
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+    },
   },
   phasesSubtitle: {
     color: '#6b7280',
     fontSize: '0.9rem',
     marginBottom: '24px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+      marginBottom: '16px',
+    },
   },
   phasesGrid: {
     display: 'grid',
     gridTemplateColumns: '1fr',
     gap: '20px',
+    '@media (max-width: 768px)': {
+      gap: '16px',
+    },
   },
   phaseCard: {
     background: '#f9fafb',
@@ -1073,9 +1296,16 @@ const styles = {
     padding: '20px',
     transition: 'all 0.3s ease',
     borderLeft: '4px solid #8b5cf6',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      borderRadius: '10px',
+    },
   },
   phaseHeader: {
     marginBottom: '16px',
+    '@media (max-width: 768px)': {
+      marginBottom: '12px',
+    },
   },
   phaseBadge: {
     display: 'flex',
@@ -1083,12 +1313,18 @@ const styles = {
     alignItems: 'center',
     marginBottom: '8px',
     flexWrap: 'wrap',
-    gap: '8px'
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      marginBottom: '6px',
+    },
   },
   phaseName: {
     fontSize: '1rem',
     fontWeight: '700',
     color: '#1f2937',
+    '@media (max-width: 768px)': {
+      fontSize: '0.9rem',
+    },
   },
   phaseStatus: {
     fontSize: '0.7rem',
@@ -1096,27 +1332,44 @@ const styles = {
     color: 'white',
     padding: '4px 10px',
     borderRadius: '10px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.6rem',
+      padding: '3px 8px',
+    },
   },
   phasePeriod: {
     fontSize: '0.85rem',
     color: '#6b7280',
     fontWeight: '500',
     margin: '0',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+    },
   },
   meetingStats: {
     marginBottom: '16px',
+    '@media (max-width: 768px)': {
+      marginBottom: '12px',
+    },
   },
   statRow: {
     display: 'flex',
     justifyContent: 'space-between',
     marginBottom: '12px',
     flexWrap: 'wrap',
-    gap: '8px'
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      marginBottom: '8px',
+      gap: '6px',
+    },
   },
   statItem: {
     textAlign: 'center',
     flex: '1',
-    minWidth: '60px'
+    minWidth: '60px',
+    '@media (max-width: 480px)': {
+      minWidth: '50px',
+    },
   },
   statNumber: {
     display: 'block',
@@ -1124,11 +1377,18 @@ const styles = {
     fontWeight: '700',
     color: '#1f2937',
     marginBottom: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+      marginBottom: '2px',
+    },
   },
   statLabelSmall: {
     fontSize: '0.7rem',
     color: '#6b7280',
     fontWeight: '500',
+    '@media (max-width: 768px)': {
+      fontSize: '0.6rem',
+    },
   },
   participantStats: {
     marginBottom: '16px',
@@ -1136,32 +1396,91 @@ const styles = {
     background: 'white',
     borderRadius: '10px',
     border: '1px solid #e5e7eb',
+    '@media (max-width: 768px)': {
+      padding: '10px',
+      borderRadius: '8px',
+      marginBottom: '12px',
+    },
   },
   participantRow: {
     display: 'flex',
     justifyContent: 'space-around',
+    marginBottom: '12px',
     flexWrap: 'wrap',
-    gap: '16px'
+    gap: '16px',
+    '@media (max-width: 768px)': {
+      marginBottom: '8px',
+      gap: '12px',
+    },
   },
   participantItem: {
     display: 'flex',
     alignItems: 'center',
     gap: '10px',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+    },
   },
   participantCount: {
     display: 'block',
     fontSize: '1.1rem',
     fontWeight: '700',
     color: '#1f2937',
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+    },
   },
   participantLabel: {
     fontSize: '0.7rem',
     color: '#6b7280',
     fontWeight: '500',
+    '@media (max-width: 768px)': {
+      fontSize: '0.6rem',
+    },
+  },
+  newParticipantsRow: {
+    display: 'flex',
+    justifyContent: 'space-around',
+    paddingTop: '12px',
+    borderTop: '1px solid #e5e7eb',
+    flexWrap: 'wrap',
+    gap: '16px',
+    '@media (max-width: 768px)': {
+      paddingTop: '8px',
+      gap: '12px',
+    },
+  },
+  newParticipantItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      gap: '6px',
+    },
+  },
+  newParticipantCount: {
+    display: 'block',
+    fontSize: '1rem',
+    fontWeight: '700',
+    color: '#10b981',
+    '@media (max-width: 768px)': {
+      fontSize: '0.9rem',
+    },
+  },
+  newParticipantLabel: {
+    fontSize: '0.65rem',
+    color: '#6b7280',
+    fontWeight: '500',
+    '@media (max-width: 768px)': {
+      fontSize: '0.55rem',
+    },
   },
   phaseTopics: {
     borderTop: '1px solid #e5e7eb',
     paddingTop: '12px',
+    '@media (max-width: 768px)': {
+      paddingTop: '8px',
+    },
   },
   topicsLabel: {
     fontSize: '0.8rem',
@@ -1169,11 +1488,18 @@ const styles = {
     color: '#6b7280',
     marginBottom: '8px',
     display: 'block',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+      marginBottom: '6px',
+    },
   },
   topicsList: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px'
+    gap: '6px',
+    '@media (max-width: 768px)': {
+      gap: '4px',
+    },
   },
   topicItem: {
     fontSize: '0.75rem',
@@ -1182,6 +1508,37 @@ const styles = {
     background: 'white',
     borderRadius: '6px',
     border: '1px solid #e5e7eb',
+    '@media (max-width: 768px)': {
+      fontSize: '0.65rem',
+      padding: '3px 6px',
+    },
+  },
+  phaseSessions: {
+    borderTop: '1px solid #e5e7eb',
+    paddingTop: '12px',
+    marginTop: '12px',
+    '@media (max-width: 768px)': {
+      paddingTop: '8px',
+      marginTop: '8px',
+    },
+  },
+  sessionStats: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '4px',
+    marginTop: '8px',
+    '@media (max-width: 768px)': {
+      marginTop: '6px',
+      gap: '3px',
+    },
+  },
+  sessionStat: {
+    fontSize: '0.75rem',
+    color: '#4b5563',
+    padding: '2px 0',
+    '@media (max-width: 768px)': {
+      fontSize: '0.65rem',
+    },
   },
   // Capacity Section
   capacityCard: {
@@ -1191,28 +1548,47 @@ const styles = {
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
     marginBottom: '24px',
     border: '1px solid #f1f5f9',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      borderRadius: '12px',
+      marginBottom: '20px',
+    },
   },
   capacityHeader: {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
     marginBottom: '8px',
+    '@media (max-width: 768px)': {
+      gap: '12px',
+      marginBottom: '6px',
+    },
   },
   capacityTitleSection: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+    },
   },
   capacityTitle: {
     fontSize: 'clamp(1.1rem, 3vw, 1.25rem)',
     fontWeight: '700',
     color: '#1f2937',
     margin: '0',
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+    },
   },
   capacitySubtitle: {
     color: '#6b7280',
     fontSize: '0.9rem',
     marginBottom: '20px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+      marginBottom: '16px',
+    },
   },
   searchBox: {
     position: 'relative',
@@ -1224,6 +1600,10 @@ const styles = {
     border: '1.5px solid #e5e7eb',
     borderRadius: '10px',
     padding: '8px 12px',
+    '@media (max-width: 768px)': {
+      padding: '6px 10px',
+      borderRadius: '8px',
+    },
   },
   searchInput: {
     width: '100%',
@@ -1234,6 +1614,10 @@ const styles = {
     color: '#374151',
     padding: '4px 8px 4px 32px',
     outline: 'none',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+      padding: '2px 6px 2px 28px',
+    },
   },
   clearSearch: {
     position: 'absolute',
@@ -1244,12 +1628,20 @@ const styles = {
     color: '#9ca3af',
     cursor: 'pointer',
     padding: '4px',
-    borderRadius: '4px'
+    borderRadius: '4px',
+    '@media (max-width: 768px)': {
+      right: '10px',
+      fontSize: '1rem',
+    },
   },
   capacityGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
     gap: '16px',
+    '@media (max-width: 768px)': {
+      gridTemplateColumns: '1fr',
+      gap: '12px',
+    },
   },
   capacityItem: {
     background: '#f9fafb',
@@ -1257,6 +1649,10 @@ const styles = {
     borderRadius: '12px',
     padding: '16px',
     transition: 'all 0.3s ease',
+    '@media (max-width: 768px)': {
+      padding: '12px',
+      borderRadius: '10px',
+    },
   },
   capacityItemHeader: {
     display: 'flex',
@@ -1264,18 +1660,27 @@ const styles = {
     alignItems: 'flex-start',
     marginBottom: '12px',
     flexWrap: 'wrap',
-    gap: '8px'
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      marginBottom: '8px',
+    },
   },
   mentorName: {
     fontSize: '0.95rem',
     fontWeight: '600',
     color: '#1f2937',
     margin: '0',
+    '@media (max-width: 768px)': {
+      fontSize: '0.85rem',
+    },
   },
   menteeCount: {
     fontSize: '0.85rem',
     fontWeight: '500',
     color: '#6b7280',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+    },
   },
   progressBar: {
     width: '100%',
@@ -1284,6 +1689,10 @@ const styles = {
     borderRadius: '3px',
     overflow: 'hidden',
     marginBottom: '8px',
+    '@media (max-width: 768px)': {
+      height: '5px',
+      marginBottom: '6px',
+    },
   },
   progressFill: {
     height: '100%',
@@ -1297,13 +1706,21 @@ const styles = {
     fontSize: '0.8rem',
     fontWeight: '500',
     marginBottom: '12px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+      gap: '6px',
+      marginBottom: '8px',
+    },
   },
   statusWarning: {
     color: '#dc2626'
   },
   menteeList: {
     borderTop: '1px solid #e5e7eb',
-    paddingTop: '12px'
+    paddingTop: '12px',
+    '@media (max-width: 768px)': {
+      paddingTop: '8px',
+    },
   },
   menteeListTitle: {
     fontSize: '0.8rem',
@@ -1311,11 +1728,18 @@ const styles = {
     color: '#6b7280',
     marginBottom: '8px',
     display: 'block',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+      marginBottom: '6px',
+    },
   },
   menteeNames: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '6px'
+    gap: '6px',
+    '@media (max-width: 768px)': {
+      gap: '4px',
+    },
   },
   menteeName: {
     fontSize: '0.75rem',
@@ -1324,6 +1748,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '6px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.65rem',
+      gap: '4px',
+    },
   },
   menteeBullet: {
     color: '#8b5cf6',
@@ -1337,23 +1765,38 @@ const styles = {
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
     marginBottom: '24px',
     border: '1px solid #f1f5f9',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      borderRadius: '12px',
+      marginBottom: '20px',
+    },
   },
   sessionsHeader: {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
     marginBottom: '24px',
+    '@media (max-width: 768px)': {
+      gap: '12px',
+      marginBottom: '16px',
+    },
   },
   sessionsTitleSection: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '8px'
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      gap: '6px',
+    },
   },
   sessionsTitle: {
     fontSize: 'clamp(1.1rem, 3vw, 1.25rem)',
     fontWeight: '700',
     color: '#1f2937',
     margin: '0',
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+    },
   },
   sessionCount: {
     fontSize: '0.85rem',
@@ -1362,28 +1805,45 @@ const styles = {
     background: '#f3f4f6',
     padding: '6px 12px',
     borderRadius: '6px',
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-start',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+      padding: '4px 8px',
+    },
   },
   filterContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '16px'
+    gap: '16px',
+    '@media (max-width: 768px)': {
+      gap: '12px',
+    },
   },
   filterGroup: {
     display: 'flex',
     flexDirection: 'column',
     gap: '8px',
+    '@media (max-width: 768px)': {
+      gap: '6px',
+    },
   },
   filterLabel: {
     fontSize: '0.85rem',
     fontWeight: '600',
     color: '#374151',
     minWidth: '100px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+      minWidth: '80px',
+    },
   },
   filterButtons: {
     display: 'flex',
     flexWrap: 'wrap',
-    gap: '8px'
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      gap: '6px',
+    },
   },
   filterBtn: {
     padding: '8px 16px',
@@ -1397,6 +1857,12 @@ const styles = {
     transition: 'all 0.2s ease',
     flex: '1',
     minWidth: '80px',
+    '@media (max-width: 768px)': {
+      padding: '6px 12px',
+      fontSize: '0.7rem',
+      minWidth: '60px',
+      borderRadius: '6px',
+    },
   },
   filterBtnActive: {
     background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
@@ -1429,12 +1895,19 @@ const styles = {
     alignItems: 'center',
     marginBottom: '20px',
     flexWrap: 'wrap',
-    gap: '16px'
+    gap: '16px',
+    '@media (max-width: 768px)': {
+      marginBottom: '16px',
+      gap: '12px',
+    },
   },
   carouselInfo: {
     display: 'flex',
     alignItems: 'center',
-    gap: '12px'
+    gap: '12px',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+    },
   },
   carouselCounter: {
     fontSize: '0.9rem',
@@ -1442,11 +1915,18 @@ const styles = {
     color: '#6b7280',
     background: '#f3f4f6',
     padding: '6px 12px',
-    borderRadius: '20px'
+    borderRadius: '20px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+      padding: '4px 8px',
+    },
   },
   carouselControls: {
     display: 'flex',
-    gap: '8px'
+    gap: '8px',
+    '@media (max-width: 768px)': {
+      gap: '6px',
+    },
   },
   carouselBtn: {
     width: '40px',
@@ -1459,12 +1939,19 @@ const styles = {
     justifyContent: 'center',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
+    '@media (max-width: 768px)': {
+      width: '36px',
+      height: '36px',
+    },
   },
   carouselContent: {
     position: 'relative',
     width: '100%',
     overflow: 'hidden',
-    minHeight: '300px'
+    minHeight: '300px',
+    '@media (max-width: 768px)': {
+      minHeight: '250px',
+    },
   },
   carouselSlide: {
     position: 'absolute',
@@ -1495,12 +1982,21 @@ const styles = {
     minHeight: '280px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '20px'
+    gap: '20px',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      minHeight: '220px',
+      gap: '16px',
+      borderRadius: '12px',
+    },
   },
   sessionHeader: {
     display: 'flex',
     alignItems: 'flex-start',
     gap: '16px',
+    '@media (max-width: 768px)': {
+      gap: '12px',
+    },
   },
   sessionIconContainer: {
     width: '50px',
@@ -1511,10 +2007,18 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     border: '1.5px solid #e2e8f0',
-    flexShrink: 0
+    flexShrink: 0,
+    '@media (max-width: 768px)': {
+      width: '40px',
+      height: '40px',
+      borderRadius: '10px',
+    },
   },
   sessionIcon: {
     fontSize: '1.5rem',
+    '@media (max-width: 768px)': {
+      fontSize: '1.25rem',
+    },
   },
   sessionMainInfo: {
     flex: '1'
@@ -1524,34 +2028,56 @@ const styles = {
     fontWeight: '700',
     color: '#1f2937',
     margin: '0 0 12px 0',
-    lineHeight: '1.3'
+    lineHeight: '1.3',
+    '@media (max-width: 768px)': {
+      fontSize: '1rem',
+      marginBottom: '8px',
+    },
   },
   sessionMeta: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '4px'
+    gap: '4px',
+    '@media (max-width: 768px)': {
+      gap: '3px',
+    },
   },
   sessionDateTime: {
     fontSize: '0.95rem',
     color: '#6b7280',
-    fontWeight: '500'
+    fontWeight: '500',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+    },
   },
   sessionDetailsMeta: {
     fontSize: '0.85rem',
     color: '#9ca3af',
-    fontWeight: '500'
+    fontWeight: '500',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+    },
   },
   sessionContent: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'flex-end',
     gap: '24px',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    '@media (max-width: 768px)': {
+      gap: '16px',
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
   },
   sessionParticipants: {
     display: 'flex',
     gap: '20px',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
+    '@media (max-width: 768px)': {
+      gap: '12px',
+      width: '100%',
+    },
   },
   participantCard: {
     display: 'flex',
@@ -1561,7 +2087,13 @@ const styles = {
     background: '#f8fafc',
     borderRadius: '10px',
     border: '1px solid #e2e8f0',
-    minWidth: '180px'
+    minWidth: '180px',
+    '@media (max-width: 768px)': {
+      padding: '8px 12px',
+      gap: '8px',
+      minWidth: '140px',
+      flex: '1',
+    },
   },
   participantInfo: {
     display: 'flex',
@@ -1571,23 +2103,38 @@ const styles = {
     fontSize: '0.75rem',
     color: '#6b7280',
     fontWeight: '500',
-    marginBottom: '2px'
+    marginBottom: '2px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.65rem',
+    },
   },
   participantName: {
     fontSize: '0.9rem',
     color: '#1f2937',
-    fontWeight: '600'
+    fontWeight: '600',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+    },
   },
   sessionStatusSection: {
     display: 'flex',
     flexDirection: 'column',
     gap: '16px',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    '@media (max-width: 768px)': {
+      alignItems: 'flex-start',
+      gap: '12px',
+      width: '100%',
+    },
   },
   statusBadges: {
     display: 'flex',
     gap: '8px',
-    alignItems: 'center'
+    alignItems: 'center',
+    '@media (max-width: 768px)': {
+      gap: '6px',
+      flexWrap: 'wrap',
+    },
   },
   phaseBadgeSmall: {
     padding: '6px 12px',
@@ -1595,6 +2142,10 @@ const styles = {
     fontSize: '0.75rem',
     fontWeight: '600',
     color: 'white',
+    '@media (max-width: 768px)': {
+      padding: '4px 8px',
+      fontSize: '0.65rem',
+    },
   },
   statusBadge: {
     padding: '6px 12px',
@@ -1604,7 +2155,11 @@ const styles = {
     border: '1px solid',
     display: 'flex',
     alignItems: 'center',
-    gap: '4px'
+    gap: '4px',
+    '@media (max-width: 768px)': {
+      padding: '4px 8px',
+      fontSize: '0.65rem',
+    },
   },
   carouselIndicators: {
     display: 'flex',
@@ -1612,7 +2167,12 @@ const styles = {
     alignItems: 'center',
     gap: '8px',
     marginTop: '24px',
-    padding: '16px 0'
+    padding: '16px 0',
+    '@media (max-width: 768px)': {
+      marginTop: '16px',
+      padding: '12px 0',
+      gap: '6px',
+    },
   },
   carouselIndicator: {
     width: '8px',
@@ -1622,21 +2182,35 @@ const styles = {
     border: 'none',
     cursor: 'pointer',
     transition: 'all 0.2s ease',
+    '@media (max-width: 768px)': {
+      width: '6px',
+      height: '6px',
+    },
   },
   carouselIndicatorActive: {
     width: '24px',
     borderRadius: '12px',
-    background: '#8b5cf6'
+    background: '#8b5cf6',
+    '@media (max-width: 768px)': {
+      width: '20px',
+    },
   },
   emptyState: {
     textAlign: 'center',
     padding: '60px 20px',
     color: '#9ca3af',
+    '@media (max-width: 768px)': {
+      padding: '40px 16px',
+    },
   },
   emptyText: {
     fontSize: '0.9rem',
     fontWeight: '500',
-    marginTop: '12px'
+    marginTop: '12px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.8rem',
+      marginTop: '8px',
+    },
   },
   // Footer
   footer: {
@@ -1645,17 +2219,27 @@ const styles = {
     overflow: 'hidden',
     boxShadow: '0 10px 40px rgba(0, 0, 0, 0.12)',
     border: '1px solid #f1f5f9',
+    '@media (max-width: 768px)': {
+      borderRadius: '12px',
+    },
   },
   footerContent: {
     display: 'grid',
     gridTemplateColumns: '1fr',
     gap: '32px',
     padding: '24px',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+      gap: '24px',
+    },
   },
   footerSection: {
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+    },
   },
   footerTitle: {
     fontSize: '1rem',
@@ -1665,27 +2249,43 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
+    '@media (max-width: 768px)': {
+      fontSize: '0.9rem',
+      gap: '6px',
+    },
   },
   footerText: {
     color: '#6b7280',
     fontSize: '0.85rem',
     lineHeight: '1.5',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+    },
   },
   footerLinks: {
     display: 'flex',
     flexDirection: 'column',
     gap: '6px',
+    '@media (max-width: 768px)': {
+      gap: '4px',
+    },
   },
   footerLink: {
     color: '#6b7280',
     textDecoration: 'none',
     fontSize: '0.85rem',
     transition: 'color 0.2s ease',
+    '@media (max-width: 768px)': {
+      fontSize: '0.75rem',
+    },
   },
   contactInfo: {
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+    },
   },
   contactItem: {
     display: 'flex',
@@ -1693,30 +2293,49 @@ const styles = {
     gap: '10px',
     color: '#6b7280',
     fontSize: '0.85rem',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+      fontSize: '0.75rem',
+    },
   },
   contactIcon: {
     fontSize: '1rem',
+    '@media (max-width: 768px)': {
+      fontSize: '0.9rem',
+    },
   },
   footerBottom: {
     borderTop: '1px solid #e5e7eb',
     padding: '20px 24px',
     background: '#f9fafb',
+    '@media (max-width: 768px)': {
+      padding: '16px',
+    },
   },
   footerBottomContent: {
     display: 'flex',
     flexDirection: 'column',
     gap: '12px',
     alignItems: 'center',
+    '@media (max-width: 768px)': {
+      gap: '8px',
+    },
   },
   copyright: {
     color: '#6b7280',
     fontSize: '0.8rem',
     fontWeight: '500',
     textAlign: 'center',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+    },
   },
   socialLinks: {
     display: 'flex',
     gap: '16px',
+    '@media (max-width: 768px)': {
+      gap: '12px',
+    },
   },
   socialLink: {
     color: '#6b7280',
@@ -1724,5 +2343,8 @@ const styles = {
     fontSize: '0.8rem',
     fontWeight: '500',
     transition: 'color 0.2s ease',
+    '@media (max-width: 768px)': {
+      fontSize: '0.7rem',
+    },
   }
 };
